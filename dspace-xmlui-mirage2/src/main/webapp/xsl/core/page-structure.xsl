@@ -123,6 +123,48 @@
                              </div>
                          </div>
 
+                         <!-- DATASHARE - start -->
+                         <div id="datashare-footer">
+                           <div id="footer-1">
+                             <div class="container">
+                               <div>
+                                 <a href="http://www.ed.ac.uk/">THE UNIVERSITY OF EDINBURGH</a>
+                               </div>
+                               <div id="footer-dsa" class="hidden-xs">
+                                 <a href="https://assessment.datasealofapproval.org/assessment_175/seal/html/">
+                                   <img border="0" src="{$theme-path}/images/dsa.png" alt="dsa_logo" width="80"/>
+                                 </a>
+                               </div>
+                             </div>
+                           </div>
+                           </div>
+                           <div id="footer-2">
+                             <div class="container">
+                               <div id="footer-2-col-1">
+                                 <ul>
+                                   <li>
+                                     <a href="http://www.ed.ac.uk/about/website/accessibility">Accessibility</a>
+                                   </li>
+                                   <li>
+                                     <a href="http://www.ed.ac.uk/about/website/privacy">Cookies</a>
+                                   </li>
+
+                                   <li>
+                                     <a href="https://www.ed.ac.uk/information-services/research-support/research-data-service/sharing-preserving-data/data-repository/service-policies/privacy-notice">DataShare Privacy Notice</a>
+                                   </li>
+                                 </ul>
+                               </div>
+                               <div id="footer-2-col-2">
+                                 <ul>
+                                   <li><a href="http://www.ed.ac.uk/information-services/research-support/data-library/contact-us">Contact Us</a></li>
+                                   <li><a href="http://www.ed.ac.uk/information-services/research-support/data-library/data-repository/service-policies/service-level-definition">Service level definition</a></li>
+                                   <li><a href="http://www.ed.ac.uk/about/website/freedom-information">Freedom of information</a></li>
+                                 </ul>
+                               </div>
+                               <div id="footer-2-col-3">The University of Edinburgh is a charitable body, registered in Scotland, with registration number SC005336, VAT Registration Number GB 592 9507 00, and is acknowledged by the UK authorities as a “Recognised body” which has been granted degree awarding powers.</div>
+                             </div>
+                         </div>
+                         <!-- DATASHARE - end -->
 
                         </xsl:otherwise>
                     </xsl:choose>
@@ -342,11 +384,20 @@
                             <span class="icon-bar"></span>
                         </button>
 
+                          <!-- DATASHARE - start -->
                         <a href="{$context-path}/" class="navbar-brand">
                             <img src="{$theme-path}images/DSpace-logo-line.svg" />
                         </a>
+                    </div>
 
+                    <div id="header-eduni" class="navbar-header hidden-xs">
+                      <a href="http://www.ed.ac.uk/home" class="navbar-brand">
+                        <img alt="Edinburgh DataShare" src="{$theme-path}/images/edinburgh-uni.png" />
+                      </a>
+                    </div>
 
+                        <!-- DATASHARE - end -->
+<!--
                         <div class="navbar-header pull-right visible-xs hidden-sm hidden-md hidden-lg">
                         <ul class="nav nav-pills pull-left ">
 
@@ -477,7 +528,10 @@
                         </button>
                     </div>
                 </div>
-            </div>
+-->
+
+       </div>
+      </div>
 
         </header>
 
@@ -487,6 +541,24 @@
     <!-- The header (distinct from the HTML head element) contains the title, subtitle, login box and various
         placeholders for header images -->
     <xsl:template name="buildTrail">
+
+      <!-- DATASHARE - start -->
+      <div id="is-banner">
+        <div class="container">
+          <div class="row">
+            <div id="is-banner-text">
+              <a href="http://www.ed.ac.uk/information-services">INFORMATION SERVICES</a>
+            </div>
+            <div id="is-banner-contact-us" class="hidden-xs">
+              <a href="http://www.ed.ac.uk/information-services/research-support/data-library/contact-us">
+              <img alt="Contact Us" src="{$theme-path}/images/contact-us.png"/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- DATASHARE - end -->
+
         <div class="trail-wrapper hidden-print">
             <div class="container">
                 <div class="row">

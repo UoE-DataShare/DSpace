@@ -66,6 +66,12 @@ public class DOIConsumer implements Consumer
         }
         Item item = (Item) dso;
         
+        // DATASHARE - ignore unarchived items
+     	if (!item.isArchived()) {
+     			return;
+     	}
+        // DATASHARE - end
+        
         if (ContentServiceFactory.getInstance().getWorkspaceItemService().findByItem(ctx, item) != null
                 || WorkflowServiceFactory.getInstance().getWorkflowItemService().findByItem(ctx, item) != null)
         {

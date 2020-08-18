@@ -67,16 +67,31 @@
         <xsl:apply-templates select="mets:dmdSec/mets:mdWrap[@OTHERMDTYPE='DIM']/mets:xmlData/dim:dim"
                              mode="itemDetailView-DIM"/>
 
+        <xsl:variable name="showTombstone">
+          <xsl:call-template name="showTombstome"/>
+        </xsl:variable>
+
         <!-- Generate the bitstream information from the file section -->
         <xsl:choose>
             <xsl:when test="./mets:fileSec/mets:fileGrp[@USE='CONTENT' or @USE='ORIGINAL' or @USE='LICENSE']/mets:file">
-                <h3><i18n:text>xmlui.dri2xhtml.METS-1.0.item-files-head</i18n:text></h3>
-                <div class="file-list">
+
+              <!-- DATASHARE - start -->
+              <xsl:choose>
+                <xsl:when test="$showTombstone = 'true'">
+                  <div id="item-page-tombstone">No download currently available for this item.</div>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:call-template name="downloadAllButton"><xsl:with-param name="show_checksum" select="'true'"/></xsl:call-template>
+                  <h3><i18n:text>xmlui.dri2xhtml.METS-1.0.item-files-head</i18n:text></h3>
+                  <div class="file-list">
                     <xsl:apply-templates select="./mets:fileSec/mets:fileGrp[@USE='CONTENT' or @USE='ORIGINAL' or @USE='LICENSE' or @USE='CC-LICENSE']">
-                        <xsl:with-param name="context" select="."/>
-                        <xsl:with-param name="primaryBitstream" select="./mets:structMap[@TYPE='LOGICAL']/mets:div[@TYPE='DSpace Item']/mets:fptr/@FILEID"/>
+                      <xsl:with-param name="context" select="."/>
+                      <xsl:with-param name="primaryBitstream" select="./mets:structMap[@TYPE='LOGICAL']/mets:div[@TYPE='DSpace Item']/mets:fptr/@FILEID"/>
                     </xsl:apply-templates>
-                </div>
+                  </div>
+                </xsl:otherwise>
+              </xsl:choose>
+              <!-- DATASHARE - end -->
             </xsl:when>
             <!-- Special case for handling ORE resource maps stored as DSpace bitstreams -->
             <xsl:when test="./mets:fileSec/mets:fileGrp[@USE='ORE']">
@@ -106,6 +121,7 @@
     <xsl:template match="dim:dim" mode="itemSummaryView-DIM">
         <div class="item-summary-view-metadata">
             <xsl:call-template name="itemSummaryView-DIM-title"/>
+            <!-- DATASHARE - start -->
             <div class="row">
                 <div class="col-sm-4">
                     <div class="row">
@@ -116,18 +132,40 @@
                             <xsl:call-template name="itemSummaryView-DIM-file-section"/>
                         </div>
                     </div>
-                    <xsl:call-template name="itemSummaryView-DIM-date"/>
-                    <xsl:call-template name="itemSummaryView-DIM-authors"/>
+                    <xsl:call-template name="itemSummaryView-DIM-date-available"/>
+                    <xsl:call-template name="itemSummaryView-DIM-type"/>
+                    <xsl:call-template name="itemSummaryView-DIM-creators"/>
+                    <xsl:call-template name="itemSummaryView-DIM-publisher"/>
+                    <xsl:call-template name="itemSummaryView-DIM-isversionof"/>
+                    <xsl:call-template name="itemSummaryView-DIM-isreferencedby"/>
+
                     <xsl:if test="$ds_item_view_toggle_url != ''">
                         <xsl:call-template name="itemSummaryView-show-full"/>
                     </xsl:if>
+
+                    <xsl:call-template name="itemSummaryView-altmetric-badge"/>
                 </div>
                 <div class="col-sm-8">
-                    <xsl:call-template name="itemSummaryView-DIM-abstract"/>
-                    <xsl:call-template name="itemSummaryView-DIM-URI"/>
-                    <xsl:call-template name="itemSummaryView-collections"/>
+                  <xsl:call-template name="itemSummaryView-DIM-citation"/>
+                  <xsl:call-template name="itemSummaryView-DIM-description"/>
+
+                  <xsl:variable name="showTombstone">
+                    <xsl:call-template name="showTombstome"/>
+                  </xsl:variable>
+
+                  <xsl:choose>
+                    <xsl:when test="$showTombstone = 'true'">
+                      <div id="item-page-tombstone">No download currently available for this item.</div>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:call-template name="itemSummaryView-DIM-file-section"/>
+                    </xsl:otherwise>
+                  </xsl:choose>
+
+
                 </div>
             </div>
+            <!-- DATASHARE - end -->
         </div>
     </xsl:template>
 
@@ -168,7 +206,11 @@
     <xsl:template name="itemSummaryView-DIM-thumbnail">
         <div class="thumbnail">
             <xsl:choose>
-                <xsl:when test="//mets:fileSec/mets:fileGrp[@USE='THUMBNAIL']">
+              <!-- DATASHARE - start -->
+              <!-- DATASHARE - take into account embargoed items -->
+                <!-- <xsl:when test="//mets:fileSec/mets:fileGrp[@USE='THUMBNAIL']"> -->
+                <xsl:when test="//mets:fileSec/mets:fileGrp[@USE='THUMBNAIL'] and (string-length(dim:field[@element='date' and @qualifier='embargo']) = 0)">
+              <!-- DATASHARE - end -->
                     <xsl:variable name="src">
                         <xsl:choose>
                             <xsl:when test="/mets:METS/mets:fileSec/mets:fileGrp[@USE='THUMBNAIL']/mets:file[@GROUPID=../../mets:fileGrp[@USE='CONTENT']/mets:file[@GROUPID=../../mets:fileGrp[@USE='THUMBNAIL']/mets:file/@GROUPID][1]/@GROUPID]">
@@ -332,10 +374,14 @@
     <xsl:template name="itemSummaryView-DIM-file-section">
         <xsl:choose>
             <xsl:when test="//mets:fileSec/mets:fileGrp[@USE='CONTENT' or @USE='ORIGINAL' or @USE='LICENSE']/mets:file">
+              <!-- DATASHARE - start -->
+              <xsl:call-template name="downloadAllButton"/>
+
                 <div class="item-page-field-wrapper table word-break">
-                    <h5>
-                        <i18n:text>xmlui.dri2xhtml.METS-1.0.item-files-viewOpen</i18n:text>
-                    </h5>
+                   <!-- <h5> -->
+                    <!--     <i18n:text>xmlui.dri2xhtml.METS-1.0.item-files-viewOpen</i18n:text> -->
+                    <!-- </h5> -->
+                    <!-- DATASHARE - end -->
 
                     <xsl:variable name="label-1">
                             <xsl:choose>
@@ -359,7 +405,10 @@
                             </xsl:choose>
                     </xsl:variable>
 
-                    <xsl:for-each select="//mets:fileSec/mets:fileGrp[@USE='CONTENT' or @USE='ORIGINAL' or @USE='LICENSE']/mets:file">
+                    <!-- DATASHARE - start -->
+                    <!-- <xsl:for-each select="//mets:fileSec/mets:fileGrp[@USE='CONTENT' or @USE='ORIGINAL' or @USE='LICENSE']/mets:file"> -->
+                    <xsl:for-each select="//mets:fileSec/mets:fileGrp[@USE='CONTENT' or @USE='ORIGINAL' or @USE='CC-LICENSE']/mets:file">
+                    <!-- DATASHARE - end -->
                         <xsl:call-template name="itemSummaryView-DIM-file-section-entry">
                             <xsl:with-param name="href" select="mets:FLocat[@LOCTYPE='URL']/@xlink:href" />
                             <xsl:with-param name="mimetype" select="@MIMETYPE" />
@@ -389,6 +438,11 @@
         <xsl:param name="size" />
         <div>
             <a>
+                <!-- DATASHARE start -->
+                <xsl:call-template name="addFileSizeCheck">
+                  <xsl:with-param name="size" select="$size"/>
+                </xsl:call-template>
+                <!-- DATASHARE end -->
                 <xsl:attribute name="href">
                     <xsl:value-of select="$href"/>
                 </xsl:attribute>
@@ -453,6 +507,164 @@
         </div>
     </xsl:template>
 
+    <!-- DATASHARE - start -->
+    <xsl:template name="itemSummaryView-DIM-date-available">
+      <xsl:if test="dim:field[@element='date' and @qualifier='available' and descendant::text()]">
+        <div class="simple-item-view-date-available word-break item-page-field-wrapper table">
+          <h5>Date Available</h5>
+          <xsl:for-each select="dim:field[@element='date' and @qualifier='available']">
+            <xsl:copy-of select="substring(./node(), 1, 10)"/>
+            <xsl:if test="count(following-sibling::dim:field[@element='date' and @qualifier='available']) != 0">
+              <br/>
+            </xsl:if>
+          </xsl:for-each>
+        </div>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-type">
+      <xsl:if test="dim:field[@element='type' and descendant::text()]">
+        <div class="simple-item-view-type word-break item-page-field-wrapper table">
+          <h5>Type</h5>
+          <xsl:for-each select="dim:field[@element='type']">
+            <xsl:copy-of select="./node()"/>
+            <xsl:if test="count(following-sibling::dim:field[@element='type']) != 0">
+              <br/>
+            </xsl:if>
+          </xsl:for-each>
+          <br/>
+        </div>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-creators">
+      <xsl:if test="dim:field[@element='creator' and descendant::text()]">
+        <div class="simple-item-view-creators item-page-field-wrapper table">
+          <h5>Data Creator</h5>
+          <xsl:for-each select="dim:field[@element='creator']">
+            <xsl:copy-of select="./node()"/>
+            <br/>
+          </xsl:for-each>
+        </div>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-publisher">
+      <xsl:if test="dim:field[@element='publisher' and descendant::text()]">
+        <div class="simple-item-view-publisher item-page-field-wrapper table">
+          <h5>Publisher</h5>
+          <xsl:for-each select="dim:field[@element='publisher']">
+            <xsl:copy-of select="./node()"/>
+          </xsl:for-each>
+        </div>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-citation">
+      <xsl:if test="dim:field[@element='identifier' and @qualifier='citation' and descendant::text()]">
+        <div class="simple-item-view-citation word-break item-page-field-wrapper table">
+          <h5>Citation</h5>
+          <xsl:for-each select="dim:field[@element='identifier' and @qualifier='citation']">
+            <xsl:copy-of select="./node()"/>
+            <xsl:if test="count(following-sibling::dim:field[@element='identifier' and @qualifier='citation']) != 0">
+              <br/>
+            </xsl:if>
+          </xsl:for-each>
+        </div>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-description">
+      <xsl:if test="dim:field[@element='description' and @qualifier='abstract' and descendant::text()]">
+        <div class="simple-item-view-description word-break item-page-field-wrapper table">
+          <h5>Description</h5>
+          <xsl:for-each select="dim:field[@element='description' and @qualifier='abstract']">
+            <xsl:copy-of select="./node()"/>
+            <xsl:if test="count(following-sibling::dim:field[@element='description' and @qualifier='abstract']) != 0">
+              <br/>
+            </xsl:if>
+          </xsl:for-each>
+        </div>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-isversionof">
+      <xsl:if test="dim:field[@element='relation' and @qualifier='isversionof' and descendant::text()]">
+        <xsl:variable name="ivf" select="dim:field[@element='relation' and @qualifier='isversionof']"></xsl:variable>
+        <xsl:if test="starts-with($ivf, 'http') or starts-with($ivf, 'doi')">
+          <div class="simple-item-view-isversionof word-break item-page-field-wrapper table">
+          <h5>Relation (Is Version Of)</h5>
+          <a>
+            <xsl:attribute name="href">
+              <xsl:value-of select="$ivf"/>
+            </xsl:attribute>
+            <xsl:value-of select="$ivf"/>
+          </a>
+          </div>
+        </xsl:if>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-isreferencedby">
+      <xsl:if test="dim:field[@element='relation' and @qualifier='isreferencedby' and descendant::text()]">
+        <xsl:variable name="irb" select="dim:field[@element='relation' and @qualifier='isreferencedby']"></xsl:variable>
+        <xsl:comment><!-- DATASHARE - start --></xsl:comment>
+        <xsl:if test="starts-with($irb, 'http://') or starts-with($irb, 'https://')">
+        <xsl:comment><!-- DATASHARE - end --></xsl:comment>
+          <div class="simple-item-view-isreferencedby word-break item-page-field-wrapper table">
+            <h5>Relation (Is Referenced By)</h5>
+            <a>
+              <xsl:attribute name="href">
+                <xsl:value-of select="$irb"/>
+              </xsl:attribute>
+              <xsl:value-of select="$irb"/>
+            </a>
+          </div>
+        </xsl:if>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="downloadAllButton">
+      <xsl:param name="show_checksum" />
+      <xsl:if test="$document/dri:meta/dri:pageMeta/dri:metadata[@element='download_all_file']">
+        <div id="item-page-download-all">
+          <div id="item-page-download-all-button">
+            <a>
+              <xsl:call-template name="addFileSizeCheck">
+                <xsl:with-param name="size" select="$document/dri:meta/dri:pageMeta/dri:metadata[@element='download_all_file_size']"/>
+              </xsl:call-template>
+              <xsl:attribute name="href">
+                <xsl:value-of select="$document/dri:meta/dri:pageMeta/dri:metadata[@element='download_all_file']"/>
+              </xsl:attribute>
+              <img alt="Download All" src="{$theme-path}/images/download-all.png"/>
+            </a>
+          </div>
+          <div id="item-page-download-all-cs">
+            <xsl:if test="$show_checksum = 'true'">
+              <div>zip file MD5 Checksum:
+              <xsl:value-of select="$document/dri:meta/dri:pageMeta/dri:metadata[@element='download_all_file_cs']"/>
+              </div>
+            </xsl:if>
+          </div>
+        </div>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="showTombstome">
+      <xsl:choose>
+        <xsl:when test="not($document/dri:meta/dri:userMeta/dri:metadata[@element='identifier'][@qualifier='isAdmin'] = 'true') and //dim:field[@element='withdrawn'][@qualifier='showtombstone'] = 'true'">
+          <xsl:value-of select="true()"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="false()"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:template>
+    <xsl:template name="addFileSizeCheck">
+      <xsl:param name="size"/>
+        <!-- if download is larger than 10 GB warn user -->
+        <xsl:if test="$size &gt; 1024 * 1024 * 1024 * 10">
+          <xsl:attribute name="onclick">
+          <xsl:text>return confirm&#40;&quot;You are attempting to download a large file. Download may take a long time.&quot;&#41;</xsl:text>
+          </xsl:attribute>
+        </xsl:if>
+      <xsl:attribute name="test">
+         <xsl:value-of select="$size"/>
+      </xsl:attribute>
+    </xsl:template>
+    <!-- DATASHARE - end -->
+
     <xsl:template match="dim:dim" mode="itemDetailView-DIM">
         <xsl:call-template name="itemSummaryView-DIM-title"/>
         <div class="ds-table-responsive">
@@ -477,7 +689,22 @@
                     <xsl:if test="(position() div 2 mod 2 = 0)">even </xsl:if>
                     <xsl:if test="(position() div 2 mod 2 = 1)">odd </xsl:if>
                 </xsl:attribute>
+
+                <!-- DATASHARE code start -->
                 <td class="label-cell">
+                  <xsl:variable name="label">
+                    <xsl:text>xmlui.dri2xhtml.METS-1.0.item-</xsl:text>
+                    <xsl:value-of select="./@element"/>
+                    <xsl:if test="./@qualifier">
+                      <xsl:text>-</xsl:text>
+                      <xsl:value-of select="./@qualifier"/>
+                    </xsl:if>
+                  </xsl:variable>
+                  <i18n:text><xsl:value-of select="$label"/></i18n:text>
+                </td>
+                <!-- DATASHARE code end -->
+
+                <td>
                     <xsl:value-of select="./@mdschema"/>
                     <xsl:text>.</xsl:text>
                     <xsl:value-of select="./@element"/>
@@ -536,6 +763,12 @@
             <div class="col-xs-6 col-sm-3">
                 <div class="thumbnail">
                     <a class="image-link">
+                        <!-- DATASHARE start -->
+                        <xsl:call-template name="addFileSizeCheck">
+                            <xsl:with-param name="size" select="@SIZE"/>
+                        </xsl:call-template>
+                        <!-- DATASHARE end -->
+
                         <xsl:attribute name="href">
                             <xsl:value-of select="mets:FLocat[@LOCTYPE='URL']/@xlink:href"/>
                         </xsl:attribute>
@@ -638,6 +871,9 @@
                             <xsl:value-of select="util:shortenString(mets:FLocat[@LOCTYPE='URL']/@xlink:label, 30, 5)"/>
                         </dd>
                 </xsl:if>
+				   <!-- DATASHARE - start -->
+                   <dt>MD5 Checksum</dt><dd><xsl:value-of select="@CHECKSUM"/></dd>
+				   <!-- DATASHARE - end -->
                 </dl>
             </div>
 
@@ -647,7 +883,9 @@
                         <xsl:call-template name="display-rights"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:call-template name="view-open"/>
+                        <xsl:call-template name="view-open">
+                          <xsl:with-param name="size" select="@SIZE"/>
+                        </xsl:call-template>
                     </xsl:otherwise>
                 </xsl:choose>
             </div>
@@ -656,7 +894,14 @@
 </xsl:template>
 
     <xsl:template name="view-open">
+        <!-- DATASHARE start -->
+        <xsl:param name="size"/>
         <a>
+            <xsl:call-template name="addFileSizeCheck">
+                <xsl:with-param name="size" select="@SIZE"/>
+            </xsl:call-template>
+            <!-- DATASHARE end -->
+
             <xsl:attribute name="href">
                 <xsl:value-of select="mets:FLocat[@LOCTYPE='URL']/@xlink:href"/>
             </xsl:attribute>
@@ -745,6 +990,26 @@
         <!--Lookup the MIME Type's key in messages.xml language file.  If not found, just display MIME Type-->
         <i18n:text i18n:key="{$mimetype-key}"><xsl:value-of select="$mimetype"/></i18n:text>
     </xsl:template>
+
+    <!-- DATASHARE - start -->
+    <xsl:template name="itemSummaryView-altmetric-badge">
+        <xsl:for-each select="dim:field[@element='identifier' and @qualifier='uri']">
+            <xsl:variable name="doi" select="./node()"></xsl:variable>
+            <xsl:if test="starts-with($doi, 'https://doi.org/')">
+               <h5 id="altimetric-badge-title">Altmetric</h5>
+               <div data-badge-popover="right"
+                    data-badge-type="donut"
+                    data-condensed="true"
+                    data-hide-no-mentions="true"
+                    class="altmetric-embed">
+                    <xsl:attribute name="data-doi"><xsl:value-of select="substring($doi,17)"/></xsl:attribute>
+               </div>
+               <br/>
+               <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
+            </xsl:if>
+        </xsl:for-each>
+    </xsl:template>
+    <!-- DATASHARE - end -->
 
 
 </xsl:stylesheet>

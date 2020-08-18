@@ -59,3 +59,432 @@
     margin-bottom:5px;
   }
 }
+
+// DATASHARE - start
+
+.word-break {
+  -ms-word-break: normal;
+  word-break  : normal;
+}
+
+/*************************** header  *******************************/
+.navbar{
+  min-height: 10em;
+}
+
+header .navbar-default {
+  background-color: white;
+}
+
+header .navbar-default .navbar-toggle .icon-bar {
+  background-color: #888888 !important;
+}
+
+header .navbar-brand img {
+  height: 6em;
+}
+
+#header-datashare{
+  margin-left: 0em;
+}
+
+#header-eduni .navbar-brand{
+  padding-top: 1em;
+}
+
+#header-eduni .navbar-brand img {
+  padding: 0;
+  height: 2.5em;
+}
+
+#header-eduni {
+  float: right;
+}
+
+#is-banner{
+  padding-top: 0.5em;
+  background-color: #d40032;
+  color: white;
+  height: 3em;
+  font-family: "Crimson Text",serif;
+  font-size: 18px;
+}
+
+#is-banner a{
+  color: white;
+  margin-left: 0.2em;
+}
+
+#is-banner a:visited{
+  color: white;
+}
+
+#is-banner-text{
+  padding-top: 0.2em;
+  float: left;
+}
+
+#is-banner-contact-us{
+  padding-top: -0.2em;
+  float: right;
+}
+
+#is-banner-contact-us img{
+  height: 2em;
+}
+
+.trail-wrapper {
+  background-color: #cccccc;
+  height: 1.8em;
+  border-bottom: 1px solid #cccccc;
+  height: auto;
+}
+
+.trail-wrapper .breadcrumb {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+
+/*************************** home page  *******************************/
+#upload-data{
+  padding-bottom: 1em;
+}
+
+
+.btn-primary {
+  background-color: #d40032;
+  border-color: #d40032;
+}
+
+#home-welcome-deposit ul,
+#about-datashare ul{
+  list-style-type: none;
+}
+
+
+/*************************** menu *******************************/
+.list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
+  background-color: #d40032;
+  border-color: #d40032;
+}
+
+#aspect_viewArtifacts_Navigation_list_browse a:nth-child(3),
+#aspect_viewArtifacts_Navigation_list_browse a:nth-child(4),
+#aspect_browseArtifacts_CommunityBrowse_div_community-browse,
+#aspect_browseArtifacts_CollectionBrowse_div_collection-browse{
+  display: none;
+}
+
+
+/*************************** footer *******************************/
+#footer-1{
+  font-family: "Crimson Text",serif;
+  font-size: 1.3em;
+  height: 2.6em;
+  background-color: #252525;
+  color: #777777;
+}
+
+#footer-1 .container{
+  padding-top: 0.6em;
+}
+
+#footer-1 a:visited{
+  color: #777777;
+}
+
+#footer-uoe{
+  float: left;
+}
+#footer-dsa{
+  float: right;
+  padding-right: 5em;
+  margin-top: -2.8em;
+}
+
+#footer-2{
+  height: 6em;
+  background-color: #4a4a4a;
+  color: white;
+}
+
+#footer-2 a{
+  color: white;
+}
+
+#footer-2 .container{
+  padding-top: 0.6em;
+}
+
+#footer-2 ul {
+list-style-type: none;
+}
+
+/* line 170, _style.scss */
+#footer-2-col-1{
+float: left;
+}
+
+#footer-2-col-1 ul{
+padding: 0 5em 0 0;
+}
+
+
+#footer-2-col-2{
+float: left;
+}
+
+#footer-2-col-2 ul{
+padding: 0;
+}
+
+#footer-2 a:visited{
+  color: white;
+}
+
+#footer-2-col-3{
+padding: 0 5em 0 32em;
+}
+
+/*************************** ingest *******************************/
+
+#aspect_submission_StepTransformer_div_submit-describe .metadata-group{
+  cursor: pointer;
+}
+
+.metadata-group .ds-text-field{
+  display: none;
+}
+
+.metadata-group label{
+  cursor: pointer;
+  padding-left: 20px;
+  width: 500px;
+}
+
+.metadata-group-expand {
+  background-image: url(../images/list-add.png);
+  background-repeat: no-repeat;
+  background-size: 10em;
+  background-size: 2em;
+}
+
+.metadata-group-collapse {
+  background-image: url(../images/list-remove.png);
+  background-repeat: no-repeat;
+  background-size: 2em;
+}
+
+
+/* Time Period */
+#aspect_submission_StepTransformer_field_to-label,
+#aspect_submission_StepTransformer_field_from-label{
+  display: none;
+}
+
+/* from / to */
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(1),
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(5) {
+width: 4em;
+}
+
+/* year */
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(2),
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(6){
+  width: 8em;
+}
+
+/* month */
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(3),
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(7){
+  width: 12em;
+}
+
+/* day */
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(4),
+#aspect_submission_StepTransformer_item_time-period .row:nth-child(2) div:nth-child(8){
+  width: 6em;
+}
+
+/* remove subject classification lookup */
+input[name='lookup_dc_subject_classification']{
+  display: none;
+}
+
+/* hide primary bitstream radio button */
+#aspect_submission_StepTransformer_table_resumable-upload-summary  .file-primary,
+#aspect_submission_StepTransformer_table_resumable-upload-summary .ds-table-header-row th:nth-child(1){
+  display: none;
+}
+
+/*************************** item view *******************************/
+.item-summary-view-metadata h5{
+  font-weight: bold;
+}
+
+#item-page-download-all{
+  padding-bottom: 0.6em;
+}
+
+#item-page-download-all-button{
+  display: inline-block;
+}
+
+#item-page-download-all-cs{
+  padding-left: 0.6em;
+  display: inline-block;
+}
+
+.file-list .file-wrapper{
+padding-bottom: 0.2em;
+}
+
+
+/*************************** resumable upload *******************************/
+
+@import "../vendor/jquery-ui/themes/base/jquery.ui.dialog.css";
+
+#aspect_submission_StepTransformer_div_submit-file-upload{
+  padding-top: 0.5em;
+}
+
+#aspect_submission_StepTransformer_div_resumable-drop {
+  padding-: 1em;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  background-color: #5b4b4b;
+  opacity: 0.65;
+  margin-top: 0.4em;
+  margin-bottom: 0.2em;
+  z-index: 1;
+  height: 12em;
+  top: 50%;
+  vertical-align: middle !important;
+  min-height: 6em;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+#aspect_submission_StepTransformer_div_resumable-drop p {
+  padding: 0;
+  font-size: 1.4em;
+}
+
+#aspect_submission_StepTransformer_div_resumable-drop .glyphicon-upload{
+  padding-top: 0.5em;
+  font-size: 3.2em;
+  width: 2em;
+  height: 2em;
+  margin: 0;
+}
+
+#aspect_submission_StepTransformer_div_progress-button img{
+  width: 0.8em;
+  height: 0.8em;
+}
+
+#aspect_submission_StepTransformer_div_progress-button{
+  clear: left;
+  width: 5%;
+  cursor: pointer;
+  padding-bottom: 0.2em;
+}
+
+#aspect_submission_StepTransformer_div_progress{
+  height: 1em;
+  background-color: #95d195;
+}
+
+#aspect_submission_StepTransformer_div_progress-bar{
+  width: 0%;
+  float: left;
+  background-color: #5cb85c;
+  height: 1em;
+}
+
+#aspect_submission_StepTransformer_div_submit-file-upload h3{
+  clear: both;
+}
+
+/* break file names that are too long */
+#aspect_submission_StepTransformer_table_resumable-upload-summary td:nth-child(3){
+  word-break: break-all;
+}
+
+.resumable-dragover{
+  color: #555;
+  background-color: #ddd;
+  border:1px solid #999;
+  opacity: 1;
+}
+
+.resumable-files {
+ display: none;
+}
+
+.file-primary {
+  cursor: pointer;
+}
+
+.file-select {
+  cursor: pointer;
+}
+
+.file-status-success{
+  background-image: url("../images/upload-success.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.file-info{
+  background-image: url("../images/upload-info.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+.file-delete {
+  background-image: url("../images/upload-delete.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+.file-uploading div{
+  padding-top: 0.5em;
+  padding-left: 0.5em;
+}
+
+#delete-icon{
+  float: left;
+  margin: 0 7px 20px 0;
+}
+
+
+/*************************** misc *******************************/
+.glyphicon-lock {
+  color: #FF9900;
+}
+
+p.important-para{
+ border:solid 5px red;
+ color: white;
+ background-color: red;
+ font-weight: bold;
+ width: 420px;
+}
+
+//example mixin to set the text-selection style
+@mixin selection {
+  ::-moz-selection { @content; }
+  ::selection { @content; }
+}
+
+@include selection {
+  color: white;
+  background: hotpink;
+}
+
+// DATASHARE - end

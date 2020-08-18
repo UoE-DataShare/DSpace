@@ -23,6 +23,18 @@ USER dspace
 ADD --chown=dspace . /app/
 COPY dspace/src/main/docker/local.cfg /app/local.cfg
 
+# DATASHARE - START
+
+# Add missing jars folder
+COPY MissingDspaceJars /app/
+
+# Add Datashare config
+COPY DockerDatashareLocalFiles/copy-to-config/cosign/ /app/dspace/config/
+
+
+
+# DATASHARE - END
+
 # Build DSpace.  Copy the dspace-install directory to /install.  Clean up the build to keep the docker image small
 RUN mvn package -Dmirage2.on=true && \
   mv /app/dspace/target/${TARGET_DIR}/* /install && \

@@ -26,8 +26,11 @@
         <property name="javax.persistence.sharedCache.mode">ENABLE_SELECTIVE</property>
         <!-- Set in config/spring/api/core-hibernate.xml -->
         <!--<property name="net.sf.ehcache.configurationResourceName">file:${dspace.dir}/config/hibernate-ehcache-config.xml</property>-->
-
-
+        
+        <!-- DATASHARE start -->
+        <property name="hibernate.enable_lazy_load_no_trans">true</property>
+        <!-- DATASHARE end -->
+        
         <!-- Entities to be loaded by hibernate -->
         <mapping class="org.dspace.app.util.WebApp"/>
 
@@ -71,6 +74,13 @@
         <!--Basic workflow services, comment or remove when switching to the configurable workflow -->
         <mapping class="org.dspace.workflowbasic.BasicWorkflowItem"/>
         <mapping class="org.dspace.workflowbasic.TaskListItem"/>
+        
+        <!--  DATASHARE - start -->
+        <mapping class="org.dspace.content.BatchImport"/>
+        <mapping class="org.dspace.content.Dataset"/>
+        <!--  <mapping class="org.dspace.content.ItemDataset"/> -->
+        <mapping class="org.dspace.content.UUN2Email"/>
+        <!-- DATASHARE - end -->
 
         <!--Configurable workflow services, uncomment the xml workflow classes below to enable the configurable workflow-->
         <!--<mapping class="org.dspace.xmlworkflow.storedcomponents.ClaimedTask"/>
@@ -79,6 +89,9 @@
         <mapping class="org.dspace.xmlworkflow.storedcomponents.PoolTask"/>
         <mapping class="org.dspace.xmlworkflow.storedcomponents.WorkflowItemRole"/>
         <mapping class="org.dspace.xmlworkflow.storedcomponents.XmlWorkflowItem"/>-->
-
+        
+        <!-- Datashare - start IRUSUK -->
+        <mapping class="com.atmire.statistics.export.OpenURLTracker"/>
+        <!-- Datashare - end IRUSUK -->
     </session-factory>
 </hibernate-configuration>

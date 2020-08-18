@@ -49,6 +49,13 @@
    -->
    <dependencies>
       <dependency>
+         <groupId>com.atmire</groupId>
+         <artifactId>atmire-statistics-exporter-api</artifactId>
+         <version>1.0.0</version>
+         <type>jar</type>
+      </dependency>
+
+      <dependency>
          <groupId>org.dspace</groupId>
          <artifactId>dspace-api</artifactId>
       </dependency>
@@ -72,6 +79,14 @@
             </exclusion>
          </exclusions>
       </dependency>
+      
+       <!-- DATASHARE start  -->
+        <dependency>
+          <groupId>org.edu.umich</groupId>
+          <artifactId>jcosign</artifactId>
+          <version>3.0.1</version>
+        </dependency>
+        <!-- DATASHARE end  -->
 
    </dependencies>
 
