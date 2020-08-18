@@ -23,6 +23,84 @@ USER dspace
 ADD --chown=dspace . /app/
 COPY dspace/src/main/docker/local.cfg /app/local.cfg
 
+# DATASHARE - START
+
+# Add missing jars folder
+COPY MissingDspaceJars /app/
+
+# Add Datashare to config folder: COPY DockerDatashareLocalFiles/copy-to-config/ /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/dspace.cfg /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/cosign/ /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/news-xmlui.xml /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/default.license /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/cc-by.license /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/input-forms.xml /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/item-submission.xml /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/workflow-curation.xml /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/launcher.xml /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/xmlui.xconf /app/dspace/config/
+COPY DockerDatashareLocalFiles/copy-to-config/dstat.cfg /app/dspace/config/
+
+# Add Datashare config/modules: COPY DockerDatashareLocalFiles/copy-to-config/modules/ /app/dspace/config/modules/
+COPY DockerDatashareLocalFiles/copy-to-config/modules/authentication.cfg /app/dspace/config/modules/
+COPY DockerDatashareLocalFiles/copy-to-config/modules/bulkedit.cfg /app/dspace/config/modules/
+COPY DockerDatashareLocalFiles/copy-to-config/modules/stats.cfg /app/dspace/config/modules/
+COPY DockerDatashareLocalFiles/copy-to-config/modules/submission-curation.cfg /app/dspace/config/modules/
+COPY DockerDatashareLocalFiles/copy-to-config/modules/authentication-password.cfg /app/dspace/config/modules/
+COPY DockerDatashareLocalFiles/copy-to-config/modules/usage-statistics.cfg /app/dspace/config/modules/
+
+# Add Datashare config/crosswalks: COPY DockerDatashareLocalFiles/copy-to-config/crosswalks/ /app/dspace/config/crosswalks/
+COPY DockerDatashareLocalFiles/copy-to-config/crosswalks/DIM2DataCite.xsl /app/dspace/config/crosswalks/
+COPY DockerDatashareLocalFiles/copy-to-config/crosswalks/jacs.xml /app/dspace/config/crosswalks/
+COPY DockerDatashareLocalFiles/copy-to-config/crosswalks/sword-swap-ingest.xsl /app/dspace/config/crosswalks/
+
+
+# Add Datashare config/controlled-vocabularies: COPY DockerDatashareLocalFiles/copy-to-config/controlled-vocabularies/ /app/dspace/config/controlled-vocabularies/
+COPY DockerDatashareLocalFiles/copy-to-config/controlled-vocabularies/jacs.xml /app/dspace/config/controlled-vocabularies/
+
+
+# Add Datashare config/emails: COPY DockerDatashareLocalFiles/copy-to-config/emails/ /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/batch_ingest /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/embargo_expire /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/register /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/registration_notify /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/submit_archive /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/submit_task /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/subscription /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/sword_deposit /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/welcome_message /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/request_item.author /app/dspace/config/emails/
+COPY DockerDatashareLocalFiles/copy-to-config/emails/request_item.not_emailable.author /app/dspace/config/emails/
+
+# Add Datashare config/spring/api: COPY DockerDatashareLocalFiles/copy-to-spring/api/ /app/dspace/spring/api/
+COPY DockerDatashareLocalFiles/copy-to-spring/api/identifier-service.xml /app/dspace/spring/api/
+COPY DockerDatashareLocalFiles/copy-to-spring/api/discovery.xml /app/dspace/spring/api/
+
+# Add Datashare bin: COPY DockerDatashareLocalFiles/copy-to-bin/ /app/dspace/bin/
+COPY DockerDatashareLocalFiles/copy-to-bin/create-datashare-administrator.sh /app/dspace/bin/
+COPY DockerDatashareLocalFiles/copy-to-bin/replication-sync.sh /app/dspace/bin/
+COPY DockerDatashareLocalFiles/copy-to-bin/live-check.sh /app/dspace/bin/
+COPY DockerDatashareLocalFiles/copy-to-bin/clean_up.sh /app/dspace/bin/
+
+# Add Datashare webapps: COPY DockerDatashareLocalFiles/copy-to-webapps/ /app/dspace/webapps/
+COPY DockerDatashareLocalFiles/copy-to-webapps/xmlui/web.xml /app/dspace/webapps/xmlui/WEB-INF/
+COPY DockerDatashareLocalFiles/copy-to-webapps/xmlui/robots.txt /app/dspace/webapps/xmlui/static/
+
+
+COPY DockerDatashareLocalFiles/copy-to-webapps/xmlui/cocoon /app/dspace/webapps/xmlui/WEB-INF/
+
+
+COPY DockerDatashareLocalFiles/copy-to-webapps/oai/web.xml /app/dspace/webapps/oai/WEB-INF/
+
+COPY DockerDatashareLocalFiles/copy-to-webapps/solr/web.xml /app/dspace/webapps/solr/WEB-INF/
+
+COPY DockerDatashareLocalFiles/copy-to-webapps/swordv2/web.xml /app/dspace/webapps/oai/WEB-INF/
+
+# Add Datashare spring
+
+# DATASHARE - END
+
+
 # Build DSpace.  Copy the dspace-install directory to /install.  Clean up the build to keep the docker image small
 RUN mvn package -Dmirage2.on=true && \
   mv /app/dspace/target/${TARGET_DIR}/* /install && \
@@ -67,3 +145,8 @@ COPY dspace/src/main/docker/test/rest_web.xml $DSPACE_INSTALL/webapps/rest/WEB-I
 
 RUN sed -i -e "s|\${dspace.dir}|$DSPACE_INSTALL|" $DSPACE_INSTALL/webapps/solr/WEB-INF/web.xml && \
     sed -i -e "s|\${dspace.dir}|$DSPACE_INSTALL|" $DSPACE_INSTALL/webapps/rest/WEB-INF/web.xml
+
+# DATASHARE - start
+RUN mkdir -p $DSPACE_INSTALL/datashare/datasets
+# DATASHARE - end
+

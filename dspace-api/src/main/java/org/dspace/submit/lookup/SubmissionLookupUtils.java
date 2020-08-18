@@ -113,8 +113,12 @@ public class SubmissionLookupUtils
     {
         if (doi != null)
         {
-            return doi.trim().replaceAll("^http://dx.doi.org/", "")
+//            return doi.trim().replaceAll("^http://dx.doi.org/", "")
+//                    .replaceAll("^doi:", "");
+            // DATASHARE - start
+        	return doi.trim().replaceAll("^https://doi.org/", "")
                     .replaceAll("^doi:", "");
+        	// DATASHARE - end
         }
         return null;
 

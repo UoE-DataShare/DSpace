@@ -1159,9 +1159,14 @@ public class DescribeStep extends AbstractSubmissionStep
         Text text = item.addText(fieldName, "submit-text");
 
         if (dcInput.getVocabulary() != null)
-        {
-            String vocabularyUrl = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.url");
+        {   // DATASHARE - start
+        	// dspace.url fails
+        	//String vocabularyUrl = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.url");
+            // we use dspace.baseUrl to fix
+            String vocabularyUrl = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.baseUrl");
             vocabularyUrl += "/JSON/controlled-vocabulary?vocabularyIdentifier=" + dcInput.getVocabulary();
+            // DATASHARE - end 
+            
             //Also hand down the field name so our summoning script knows the field the selected value is to end up in
             vocabularyUrl += "&metadataFieldName=" + fieldName;
             item.addXref("vocabulary:" + vocabularyUrl).addContent(T_vocabulary_link);

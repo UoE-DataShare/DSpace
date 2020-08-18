@@ -62,6 +62,10 @@ public class MoveItemForm extends AbstractDSpaceTransformer {
 		pageMeta.addTrailLink(contextPath + "/", T_dspace_home);
 		pageMeta.addTrailLink(contextPath+"/admin/item", T_item_trail);
 		pageMeta.addTrail().addContent(T_trail);
+		
+		// DATASHARE - start
+                pageMeta.addMetadata("javascript", "static").addContent("static/js/move-item-dropdown.js");
+                // DATASHARE - end
 	}
 
 	public void addBody(Body body) throws WingException, SQLException 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dspace</groupId>
     <artifactId>dspace-parent</artifactId>
@@ -23,7 +24,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
-        
+
         <!--  See https://jira.duraspace.org/browse/DS-3903 for a discussion of the version of jackson that is needed -->
         <jackson.version>2.8.11</jackson.version>
         <jersey.version>2.22.1</jersey.version>
@@ -64,7 +65,7 @@
                                     <requireJavaVersion>
                                         <version>${java.version}</version>
                                     </requireJavaVersion>
-                                </rules>    
+                                </rules>
                             </configuration>
                         </execution>
                         <!-- Make sure that we do not have conflicting dependencies-->
@@ -86,8 +87,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.5.1</version>
                     <configuration>
-                      <source>${java.version}</source>
-                      <target>${java.version}</target>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
                     </configuration>
                 </plugin>
                 <!-- Used to package all DSpace JARs -->
@@ -284,7 +285,7 @@
                         <exclude>**/readme*</exclude>
                         <exclude>**/.gitignore</exclude>
                     </excludes>
-                    <mapping> 
+                    <mapping>
                         <!-- Custom DSpace file extensions which are not recognized by maven-release-plugin: 
                              *.xmap, *.xslt, *.wsdd, *.wsdl, *.ttl, *.LICENSE -->
                         <xmap>XML_STYLE</xmap>
@@ -293,7 +294,7 @@
                         <wsdl>XML_STYLE</wsdl>
                         <ttl>SCRIPT_STYLE</ttl>
                         <LICENSE>TEXT</LICENSE>
-                    </mapping>  
+                    </mapping>
                     <encoding>UTF-8</encoding>
                     <!-- maven-license-plugin recommends a strict check (e.g. check spaces/tabs too) -->
                     <strictCheck>true</strictCheck>
@@ -313,9 +314,46 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
             </plugin>
+            <!-- DATASHARE - start-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.5</version>
+                <executions>
+                    <execution>
+                        <id>install-jcosign</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>org.edu.umich</groupId>
+                            <artifactId>jcosign</artifactId>
+                            <version>3.0.1</version>
+                            <packaging>jar</packaging>
+                            <file>${root.basedir}/MissingDspaceJars/jcosign-3.0.1.jar</file>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>install-sword2-client</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <groupId>org.swordapp</groupId>
+                            <artifactId>sword2-client</artifactId>
+                            <version>0.9.2</version>
+                            <packaging>jar</packaging>
+                            <file>${root.basedir}/MissingDspaceJars/sword2-client-0.9.2.jar</file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- DATASHARE - end -->
         </plugins>
     </build>
-   
+
     <profiles>
         <!-- Skip Unit Tests by default, but allow override on command line
            by setting property "-Dmaven.test.skip=false" -->
@@ -421,8 +459,7 @@
             <id>third-party-licenses</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
-                <!-- This profile should ONLY be active when user specifies
-                     -Dthird.party.licenses=true on command-line. -->
+                <!-- This profile should ONLY be active when user specifies -Dthird.party.licenses=true on command-line. -->
                 <property>
                     <name>third.party.licenses</name>
                 </property>
@@ -516,7 +553,7 @@
                 <javadoc.opts>-Xdoclint:none</javadoc.opts>
             </properties>
         </profile>
-        
+
         <!-- PostgreSQL ships different JDBC drivers based on the version of Java
              you are running. See https://jdbc.postgresql.org/download.html
              These next two profiles handle pulling in the correct PostgreSQL JDBC driver. -->
@@ -650,18 +687,18 @@
             </modules>
         </profile>
 
-       <!-- REST Jersey -->
-       <profile>
-           <id>dspace-rest</id>
-           <activation>
-               <file>
-                   <exists>dspace-rest/pom.xml</exists>
-               </file>
-           </activation>
-           <modules>
-               <module>dspace-rest</module>
-           </modules>
-       </profile>
+        <!-- REST Jersey -->
+        <profile>
+            <id>dspace-rest</id>
+            <activation>
+                <file>
+                    <exists>dspace-rest/pom.xml</exists>
+                </file>
+            </activation>
+            <modules>
+                <module>dspace-rest</module>
+            </modules>
+        </profile>
 
 
         <!--
@@ -714,17 +751,17 @@
            Builds MIRAGE2 WAR for DSpace
         -->
         <profile>
-           <id>dspace-xmlui-mirage2</id>
-           <activation>
-               <file>
-                   <exists>dspace-xmlui-mirage2/pom.xml</exists>
-               </file>
-           </activation>
-           <modules>
-               <module>dspace-xmlui-mirage2</module>
-           </modules>
+            <id>dspace-xmlui-mirage2</id>
+            <activation>
+                <file>
+                    <exists>dspace-xmlui-mirage2/pom.xml</exists>
+                </file>
+            </activation>
+            <modules>
+                <module>dspace-xmlui-mirage2</module>
+            </modules>
         </profile>
-        
+
         <!--
            Builds XMLUI WAR for DSpace
         -->
@@ -969,7 +1006,7 @@
                 <version>[6.0.0,7.0.0)</version>
                 <type>war</type>
             </dependency>
-         
+
             <!-- DSpace third Party Dependencies -->
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -1136,6 +1173,13 @@
                 <artifactId>commons-pool2</artifactId>
                 <version>2.4.2</version>
             </dependency>
+            <!-- DATASHARE start (for jcosign)-->
+            <dependency>
+              <groupId>commons-pool</groupId>
+              <artifactId>commons-pool</artifactId>
+              <version>1.6</version>
+            </dependency>
+             <!-- DATASHARE end -->
             <dependency>
                 <groupId>commons-validator</groupId>
                 <artifactId>commons-validator</artifactId>
@@ -1189,15 +1233,15 @@
                 <version>2.0.2</version>
             </dependency>
             <dependency>
-	        <groupId>org.bouncycastle</groupId>
-	        <artifactId>bcprov-jdk15</artifactId>
-	        <version>1.46</version>
-	    </dependency>
-	    <dependency>
-	        <groupId>org.bouncycastle</groupId>
-	        <artifactId>bcmail-jdk15</artifactId>
-	        <version>1.46</version>
-	    </dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk15</artifactId>
+                <version>1.46</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcmail-jdk15</artifactId>
+                <version>1.46</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
@@ -1327,7 +1371,7 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <!-- JMockit, JUnit and Hamcrest are used for Unit/Integration tests -->
-            <dependency> <!-- Keep jmockit before junit -->
+            <dependency>                <!-- Keep jmockit before junit -->
                 <groupId>org.jmockit</groupId>
                 <artifactId>jmockit</artifactId>
                 <version>1.21</version>
@@ -1428,7 +1472,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.8.11.1</version> <!-- TODO sync. with jackson.version -->
+                <version>2.8.11.1</version>                <!-- TODO sync. with jackson.version -->
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -1510,23 +1554,23 @@
 
     <developers>
         <developer>
-           <name>DSpace Committers</name>
-           <email>dspace-devel@googlegroups.com</email>
-           <url>https://wiki.duraspace.org/display/DSPACE/DSpace+Committers</url>
-           <roles>
-             <role>committer</role>
-           </roles>
+            <name>DSpace Committers</name>
+            <email>dspace-devel@googlegroups.com</email>
+            <url>https://wiki.duraspace.org/display/DSPACE/DSpace+Committers</url>
+            <roles>
+                <role>committer</role>
+            </roles>
         </developer>
     </developers>
 
     <contributors>
         <contributor>
-           <name>DSpace Contributors</name>
-           <email>dspace-tech@googlegroups.com</email>
-           <url>https://wiki.duraspace.org/display/DSPACE/DSpaceContributors</url>
-           <roles>
-             <role>developer</role>
-           </roles>
+            <name>DSpace Contributors</name>
+            <email>dspace-tech@googlegroups.com</email>
+            <url>https://wiki.duraspace.org/display/DSPACE/DSpaceContributors</url>
+            <roles>
+                <role>developer</role>
+            </roles>
         </contributor>
     </contributors>
 
@@ -1557,15 +1601,15 @@
     <!-- Enable access to artifacts in Sonatype's snapshot repo for Snapshots ONLY -->
     <repositories>
         <repository>
-          <id>maven-snapshots</id>
-          <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-          <layout>default</layout>
+            <id>maven-snapshots</id>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+            <layout>default</layout>
             <releases>
-              <enabled>false</enabled>
+                <enabled>false</enabled>
             </releases>
-          <snapshots>
-            <enabled>true</enabled>
-          </snapshots>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 

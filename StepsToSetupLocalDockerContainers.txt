@@ -1,0 +1,99 @@
+Delete volumes
+
+`docker volume rm   d6_assetstore d6_pgdata d6_solr_authority d6_solr_oai d6_solr_searchd d6_solr_statistics`
+
+
+Then 
+
+`git co datashare-dspace-6_x`
+`git log` 
+(Find commit commit before we started building our Datashare
+```
+commit 6a7086258dd59f5980946fb954fc245d8f44a297 (origin/collectionsmanager-test-6_x, origin/collectionsmanager-6_x)
+Merge: c1aca4e17 c2e6719fa
+Author: Luigi Andrea Pascarelli <luigiandrea.pascarelli@4science.it>
+Date:   Mon Oct 28 18:44:46 2019 +0100
+
+    Merge pull request #2516 from atmire/DS-4342-6x
+    
+    [DS-4342] improve the performance of the collections/collection_id/items REST endpoint
+
+```
+
+This commit before we started building our Datashare
+
+`git co 6a7086258dd59f5980946fb954fc245d8f44a29`
+
+Run 
+`mvn clean package`
+
+*Pull*
+`docker-compose -f docker-compose.yml -f docker-compose-cli.yml pull`
+
+*Build*
+`docker-compose -f docker-compose.yml -f docker-compose-cli.yml build`
+
+*Bring application up*
+`docker-compose -p d6 up -d`
+
+The wait and go to
+
+http://localhost:8080/xmlui/
+
+One this is working
+
+*Check database*
+`docker exec -ti dspacedb bash`                                      
+root@e96a71a28a22:/# `psql -U dspace`
+
+dspace=# `select count(*) from metadatafieldregistry;`
+ 
+*Count should be around 130*
+
+Next return to `datashare-dspace-6_x`, but don't shutdown app running as we need to update database.
+`git co datashare-dspace-6_x`
+
+
+*Log in to  database again* and run 
+`docker exec -ti dspacedb bash`                                      
+root@e96a71a28a22:/# `psql -U dspace`
+
+Copy contents of *DatashareSchemaAddOns.sql* to `psql` and run.
+Next do the same with contents of *DockerLocalDBInserts.sql*.
+
+Now shutdown app
+`docker-compose -p d6 down`
+
+
+Switch back to *datashare-dspace-6_x* branch
+`git co datashare-dspace-6_x`
+
+Run 
+`mvn clean package`
+
+Then *Build*
+`docker-compose -f docker-compose.yml -f docker-compose-cli.yml build`
+
+
+The wait and go to
+
+http://localhost:8080/xmlui/
+
+Now create an admin user as follows:
+Log into `dspace` container
+`docker exec -ti dspace bash`
+
+`cd /dspace/bin`
+c 
+
+We follow the steps in `reate-datashare-administrator.sh` (it does not work when run). So we do the steps ourselves.
+Run this you wiil be promted for "E-mail address:", "First name:", "Last name:" and "UUN:"
+`./dspace create-administrator`  
+
+Then run
+
+`./dspace dsrun uk.ac.edina.datashare.administer.CreateAdministrator -u <your uun> -e <your email>`
+
+
+
+

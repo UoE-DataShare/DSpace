@@ -1,0 +1,61 @@
+Steps to Use a Datashare Database Dump
+----------------------------------------
+
+1. Make sure all the Dspace Docker containers dspace and dspacedb are down.
+
+`docker-compose -p d6 down`
+
+2. Restart only the dspacedb container.
+
+ `docker-compose -p d6 up -d dspacedb
+
+3. Log in to the dspacedb container
+
+ `docker exec -it dspacedb bash`
+
+4. Then access the database `dspace` as user dspace
+
+ `root@414c384974bc:/# psql -U dspace`
+ 
+5. Create a datasharedb database for our use.
+
+ `dspace=# CREATE DATABASE datasharedb;`
+
+6. Connect to the new datasharedb database.
+
+  `dspace=# \c datasharedb;`
+
+7. Create a pgcrypto extension on the datasharedb.
+
+  `CREATE EXTENSION pgcrypto;`
+
+8. Exit of the dspacedb container.
+
+9. Load the beta database dump file datashare_beta.sql to the datasharedb database.
+
+   `docker container exec -i dspacedb psql datasharedb -U dspace < DockerDatashareLocalFiles/datashare_beta.sql`
+
+11. Next check that the local.cfg (dspace/src/main/docker-compose/local.cfg). 
+     
+        dspace.dir=/dspace
+        db.url=jdbc:postgresql://dspacedb:5432/datasharedb
+        dspace.hostname=localhost
+        dspace.baseUrl=http://localhost:8080
+        dspace.name=DSpace Started with Docker Compose
+        solr.server=http://dspace:8080/solr
+
+    If you want others to access your instance change 
+        dspace.baseUrl=http://localhost:8080
+     to e.g.,
+        dspace.baseUrl=http://newington.edina.ac.uk:8080/
+
+
+12. Now start the dspace container. This will migrate the Datashare databasedb from Dspace 5 to 6.
+  
+  `docker-compose -p d6 up -d`
+
+  Note dspacedb will be already up.
+
+13. Now access Datashare using your Beta credentials.
+   
+    http:/localhost:8080/xmlui/ (or address you changed in dspace.baseUrl).

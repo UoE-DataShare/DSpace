@@ -109,7 +109,9 @@ public class ContextUtil
                 log.debug("Adding Special Group id="+String.valueOf(groups.get(i).getID()));
             }
 
+            // DATASHARE - start
             // Set the session ID and IP address
+            //String ip = Util.getIPAddress(request);
             String ip = request.getRemoteAddr();
             if (useProxies == null) {
                 useProxies = DSpaceServicesFactory.getInstance().getConfigurationService().getBooleanProperty("useProxies", false);
@@ -124,7 +126,9 @@ public class ContextUtil
                         ip = xfip.trim();
                     }
                 }
-	        }
+            }
+            // DATASHARE - end
+            
             context.setExtraLogInfo("session_id=" + request.getSession().getId() + ":ip_addr=" + ip);
 
             // Store the context in the request

@@ -191,10 +191,22 @@ public abstract class DSpaceObjectServiceImpl<T extends DSpaceObject> implements
     public List<MetadataValue> getMetadata(T dso, String schema, String element, String qualifier, String lang, String authority){
         List<MetadataValue> metadata = getMetadata(dso, schema, element, qualifier, lang);
         List<MetadataValue> result = new ArrayList<>(metadata);
+        
+        // DATASHARE - start
+        log.debug("authority:");
+        log.debug(authority);
+        // DATASHARE - end
+        
         if (!authority.equals(Item.ANY)) {
             Iterator<MetadataValue> iterator = result.iterator();
             while (iterator.hasNext()) {
                 MetadataValue metadataValue = iterator.next();
+                
+                // DATASHARE - start
+                log.debug("metadataValue.getAuthority():");
+                log.debug(metadataValue.getAuthority());
+                // DATASHARE - end
+                
                 if (!authority.equals(metadataValue.getAuthority())) {
                     iterator.remove();
                 }

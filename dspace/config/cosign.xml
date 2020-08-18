@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CosignConfig>
+  <KeyStorePath>/etc/ssl/certs/dlib-sidlaws-ubuntu.ucs.ed.ac.uk.jks</KeyStorePath>
+  <KeyStorePassword>changeit</KeyStorePassword>
+  <CosignServerHost>www-test.ease.ed.ac.uk</CosignServerHost>
+  <CosignServerPort>6663</CosignServerPort>
+  <ConnectionPoolSize>30</ConnectionPoolSize>
+  <CookieExpireSecs>120</CookieExpireSecs>
+  <CookieCacheExpireSecs>30</CookieCacheExpireSecs>
+  <LoginRedirectUrl>https://www-test.ease.ed.ac.uk/cosign.cgi</LoginRedirectUrl>
+  <LoginPostErrorUrl>https://www-test.ease.ed.ac.uk/post_error.html</LoginPostErrorUrl>
+  <CheckClientIP>false</CheckClientIP>
+  <HttpsOnly>false</HttpsOnly>
+  <HttpsPort>8443</HttpsPort>
+  <ClearSessionOnLogin>true</ClearSessionOnLogin>
+  <ConfigFileMonitoringIntervalSecs>5</ConfigFileMonitoringIntervalSecs>
+  <CosignGetProxies>false</CosignGetProxies>
+  <LocationHandlerRef>/cosign/valid</LocationHandlerRef>
+  <ValidationErrorRedirect>https://www-test.ease.ed.ac.uk/validation_error.html</ValidationErrorRedirect>
+  <RedirectRegex>dlib-sidlaws-ubuntu\.ucs\.ed\.ac\.uk:8443.*</RedirectRegex>
+
+  <!-- how long - in minutes - before a cosign host DNS ip refresh is to occure -->
+  <CosignServerHostIpCheck>2</CosignServerHostIpCheck>
+
+  <services>
+    <service name="cosign-eucsCosign-datalib.edina.ac.uk" getproxies="false">
+      <protected>/*</protected>
+    </service>
+  </services>
+</CosignConfig>

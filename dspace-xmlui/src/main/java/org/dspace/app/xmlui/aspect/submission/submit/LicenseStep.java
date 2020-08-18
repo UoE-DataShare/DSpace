@@ -19,6 +19,7 @@ import org.dspace.app.xmlui.wing.element.Body;
 import org.dspace.app.xmlui.wing.element.CheckBox;
 import org.dspace.app.xmlui.wing.element.Division;
 import org.dspace.app.xmlui.wing.element.List;
+import org.dspace.app.xmlui.wing.element.Para;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.Collection;
 import org.dspace.content.LicenseUtils;
@@ -94,10 +95,15 @@ public class LicenseStep extends AbstractSubmissionStep
 		inner.addPara(T_info1);
 		inner.addPara(T_info2);
 		
+		// DATASHARE start
 		
 		// Add the actual text of the license:
-		Division displayLicense = inner.addDivision("submit-license-standard-text","license-text");
-		displayLicense.addSimpleHTMLFragment(true, licenseText);
+		//Division displayLicense = inner.addDivision("submit-license-standard-text","license-text");
+		//displayLicense.addSimpleHTMLFragment(true, licenseText);
+		Para para = inner.addPara();
+		para.addContent(message("license.link.para"));
+		para.addXref(contextPath + "/docs/depositor_agreement.txt", "Depositor Agreement");
+		// DATASHARE end
 		
 		inner.addPara(T_info3);
 		
