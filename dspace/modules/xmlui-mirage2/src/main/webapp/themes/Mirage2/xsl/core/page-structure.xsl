@@ -143,7 +143,7 @@
                                    </li>
 
                                    <li>
-                                     <a href="https://www.ed.ac.uk/information-services/research-support/research-data-service/sharing-preserving-data/data-repository/service-policies/privacy-notice">DataShare Privacy Notice</a>
+                                     <a href="https://www.ed.ac.uk/information-services/research-support/research-data-service/after/data-repository/service-policies/privacy-notice">DataShare Privacy Notice</a>
                                    </li>
                                  </ul>
                                </div>
