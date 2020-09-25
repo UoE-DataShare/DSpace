@@ -143,7 +143,7 @@
                                <div id="footer-2-col-1">
                                  <ul>
                                    <li>
-                                     <a href="http://www.ed.ac.uk/about/website/accessibility">Accessibility</a>
+                                     <a href="/docs/Datashare-Accessibility.html">Accessibility</a>
                                    </li>
                                    <li>
                                      <a href="http://www.ed.ac.uk/about/website/privacy">Cookies</a>
