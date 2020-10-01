@@ -458,26 +458,27 @@ public class DSpaceUtils {
 		return hasDoi;
 	}
 
-	/**
-	 * @return True if is dspace running on a development environment.
-	 */
-	public static boolean isDev() {
-		return DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.hostname").substring(0, 5).equals("dlib-");
-	}
-
-	/**
-	 * @return True if is dspace running on a BETA environment.
-	 */
-	public static boolean isBeta() {
-		return DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.hostname").substring(0, 5).equals("devel");
-	}
-
-	/**
-	 * @return True if is dspace running on a live environment.
-	 */
-	public static boolean isLive() {
-		return (!isDev() && !isBeta());
-	}
+	// NO LONGER IN USE
+//	/**
+//	 * @return True if is dspace running on a development environment.
+//	 */
+//	public static boolean isDev() {
+//		return DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.hostname").substring(0, 5).equals("dlib-");
+//	}
+//
+//	/**
+//	 * @return True if is dspace running on a BETA environment.
+//	 */
+//	public static boolean isBeta() {
+//		return DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.hostname").substring(0, 5).equals("devel");
+//	}
+//
+//	/**
+//	 * @return True if is dspace running on a live environment.
+//	 */
+//	public static boolean isLive() {
+//		return (!isDev() && !isBeta());
+//	}
 
 	/**
 	 * Remove a DSpace item from a collection (without database commit).
