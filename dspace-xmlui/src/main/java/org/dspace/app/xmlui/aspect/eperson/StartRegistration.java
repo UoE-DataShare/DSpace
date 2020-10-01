@@ -19,6 +19,7 @@ import org.apache.cocoon.caching.CacheableProcessingComponent;
 import org.apache.cocoon.environment.SourceResolver;
 import org.apache.excalibur.source.SourceValidity;
 import org.apache.excalibur.source.impl.validity.NOPValidity;
+import org.apache.log4j.Logger;
 import org.dspace.app.xmlui.cocoon.AbstractDSpaceTransformer;
 import org.dspace.app.xmlui.wing.Message;
 import org.dspace.app.xmlui.wing.WingException;
@@ -49,7 +50,10 @@ import org.xml.sax.SAXException;
 
 public class StartRegistration extends AbstractDSpaceTransformer implements CacheableProcessingComponent
 {
-    /** language strings */
+	/** log4j log */
+	public static Logger log = Logger.getLogger(StartRegistration.class);
+	
+	/** language strings */
     private static final Message T_title =
         message("xmlui.EPerson.StartRegistration.title");
     
@@ -208,6 +212,7 @@ public class StartRegistration extends AbstractDSpaceTransformer implements Cach
        email.setLabel(T_email_address);
        email.setHelp(T_email_address_help);
        email.setValue(this.email);
+       log.debug("email: " + this.email);
        if (errors.contains("email"))
        {
            email.addError(T_error_bad_email);
