@@ -45,16 +45,22 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 
 		// See if a registration token already exists for this user
 		RegistrationData rd = registrationDataService.findByEmail(context, email);
+		log.info("Registration token already exists for this user: " + (rd != null));
+		log.debug("email: " + email);
+		log.debug("uun: " + uun);
+
 
 		// If it already exists, just re-issue it
 		if (rd == null) {
 			rd = registrationDataService.create(context);
-
+			log.info("Create new RegistrationData for new user: " + (rd != null));
+			
 			rd.setEmail(email);
 
 			rd.setUun(uun);
 
 			registrationDataService.update(context, rd);
+			log.info("Update  new RegistrationData for new user");
 
 			// This is a potential problem -- if we create the callback
 			// and then crash, registration will get SNAFU-ed.
@@ -65,6 +71,7 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 			}
 		}
 
+		log.info("Send email to user");
 		sendEmail(context, email, true, rd);
 
 	}
@@ -144,6 +151,7 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
             throws MessagingException, IOException, SQLException
     {
         String base = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.url");
+        log.debug("base url: " + base);
 
         //  Note change from "key=" to "token="
         String specialLink = new StringBuffer().append(base).append(
