@@ -52,7 +52,7 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 
 			rd.setEmail(email);
 
-			rd.setToken(uun);
+			rd.setUun(uun);
 
 			registrationDataService.update(context, rd);
 

@@ -37,8 +37,12 @@ public class RegistrationData implements ReloadableEntity<Integer> {
     @Column(name = "expires")
     @Temporal(TemporalType.TIMESTAMP)
     private Date expires;
+    
+    @Column(name= "uun", unique = true)
+    private String uun;
 
-    /**
+
+	/**
      * Protected constructor, create object using:
      * {@link org.dspace.eperson.service.RegistrationDataService#create(Context)}
      *
@@ -75,4 +79,12 @@ public class RegistrationData implements ReloadableEntity<Integer> {
     void setExpires(Date expires) {
         this.expires = expires;
     }
+    
+    public String getUun() {
+		return uun;
+	}
+
+	public void setUun(String uun) {
+		this.uun = uun;
+	}
 }
