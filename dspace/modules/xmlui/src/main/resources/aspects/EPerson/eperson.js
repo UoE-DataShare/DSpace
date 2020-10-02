@@ -94,6 +94,7 @@ function doRegister()
     }
     
     var token = cocoon.request.get("token");
+    getDatashareAccountService().log("token: " + token);
     
     if (token == null) 
     {
@@ -106,6 +107,7 @@ function doRegister()
         			
             // DATASHARE -- start
             var uun = cocoon.request.getParameter("uun");
+            getDatashareAccountService().log("uun: " +  uun);
             cocoon.sendPageAndWait("register/start",{"email" : email, "errors" : errors.join(','), "accountExists" : accountExists, "uun" : uun});
             //cocoon.sendPageAndWait("register/start",{"email" : email, "errors" : errors.join(','), "accountExists" : accountExists});
             // DATASHARE -- end
@@ -114,7 +116,7 @@ function doRegister()
             accountExists = false;
             
             var submit_forgot = cocoon.request.getParameter("submit_forgot");
-            
+            getDatashareAccountService().log("submit_forgot: " + submit_forgot);
             if (submit_forgot != null)
             {
                 // The user attempted to register with an email address that already exists then they clicked
@@ -127,6 +129,7 @@ function doRegister()
             
             email = cocoon.request.getParameter("email");
             email = email.toLowerCase(); // all emails should be lowercase
+            getDatashareAccountService().log("email: " + email);
             var epersonFound = (getEPersonService().findByEmail(getDSContext(),email) != null);
             
             if (epersonFound) 
@@ -136,6 +139,7 @@ function doRegister()
             }
             
             var canRegister = AuthenticationUtil.canSelfRegister(getObjectModel(), email);
+            getDatashareAccountService().log("canRegister: " + canRegister);
            
             if (canRegister) 
             {
@@ -146,7 +150,7 @@ function doRegister()
                     getDatashareAccountService().log("Register account for " + uun);
                     // May throw the AddressException or a variety of SMTP errors.
                     // getAccountService().sendRegistrationInfo(getDSContext(),email);
-		    getDatashareAccountService().sendInfo(getDSContext(),email, uun);
+		            getDatashareAccountService().sendInfo(getDSContext(),email, uun);
 	            // DATASHARE code end
                 }
                 catch (error) 
@@ -171,6 +175,7 @@ function doRegister()
     {
         // We have a token. Find out who it's for
         var email = getAccountService().getEmail(getDSContext(), token);
+        getDatashareAccountService().log("We have a token for email " + email);
         
         if (email == null) 
         {
@@ -179,6 +184,7 @@ function doRegister()
         }
         
         var setPassword = AuthenticationUtil.allowSetPassword(getObjectModel(),email);
+        getDatashareAccountService().log("setPassword " + setPassword);
         
         var errors = new Array();
         do {
@@ -186,6 +192,7 @@ function doRegister()
             
             // If the user had to retry the form a user may already be created.
             var eperson = getEPersonService().findByEmail(getDSContext(),email);
+            getDatashareAccountService().log("eperson " + eperson);
             if (eperson == null)
             {
                 eperson = AuthenticationUtil.createNewEperson(getObjectModel(),email);
