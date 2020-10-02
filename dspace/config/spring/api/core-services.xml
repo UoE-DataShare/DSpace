@@ -77,6 +77,7 @@
  	     Added id to beans for AccountService  and RegistrationDataService
  	-->
     <bean id="accountService" class="org.dspace.eperson.AccountServiceImpl"/>
+    <bean id="datashareAccountService" class="org.dspace.eperson.DatashareAccountServiceImpl"/>
     <bean class="org.dspace.eperson.EPersonServiceImpl"/>
     <bean class="org.dspace.eperson.GroupServiceImpl"/>
     <bean id="registrationDataService" class="org.dspace.eperson.RegistrationDataServiceImpl"/>
