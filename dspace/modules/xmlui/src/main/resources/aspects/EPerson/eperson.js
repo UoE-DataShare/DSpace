@@ -57,7 +57,7 @@ function getAccountService()
 // DATASHARE - start 
 function getDatashareAccountService()
 {
-    return DatashareEPersonServiceFactory.getInstance().getAccountService();
+    return DatashareEPersonServiceFactory.getInstance().getDatashareAccountService();
 }
 // DATASHARE - start 
 
