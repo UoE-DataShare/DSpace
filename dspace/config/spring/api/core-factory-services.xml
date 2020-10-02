@@ -29,7 +29,7 @@
     <bean id="disseminateServiceFactory" class="org.dspace.disseminate.factory.DisseminateServiceFactoryImpl"/>
     
     <!-- Datashare start - DatashareEPersonServiceFactory -->
-    <bean id="datashareEPersonServiceFactory" class="org.dspace.eperson.factor.DatashareEPersonServiceFactoryImpl"/>
+    <bean id="datashareEPersonServiceFactory" class="org.dspace.eperson.factory.DatashareEPersonServiceFactoryImpl"/>
     <!-- Datashare end -->
     
     <bean id="embargoServiceFactory" class="org.dspace.embargo.factory.EmbargoServiceFactoryImpl"/>
