@@ -12,7 +12,7 @@ public abstract class DatashareEPersonServiceFactory {
 	public abstract DatashareAccountService getDatashareAccountService();
 	
 	 public static DatashareEPersonServiceFactory getInstance(){
-	        return DSpaceServicesFactory.getInstance().getServiceManager().getServiceByName("datashareEpersonServiceFactory", DatashareEPersonServiceFactory.class);
+	        return DSpaceServicesFactory.getInstance().getServiceManager().getServiceByName("datashareEPersonServiceFactory", DatashareEPersonServiceFactory.class);
 	    }
 
 }
