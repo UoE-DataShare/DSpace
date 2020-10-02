@@ -42,12 +42,12 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 	@Override
 	public void sendInfo(Context context, String email, String uun)
 			throws SQLException, IOException, MessagingException, AuthorizeException {
-
+		try {
+		log.info("email: " + email);
+		log.info("uun: " + uun);
 		// See if a registration token already exists for this user
 		RegistrationData rd = registrationDataService.findByEmail(context, email);
 		log.info("Registration token already exists for this user: " + (rd != null));
-		log.debug("email: " + email);
-		log.debug("uun: " + uun);
 
 
 		// If it already exists, just re-issue it
@@ -60,7 +60,7 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 			rd.setUun(uun);
 
 			registrationDataService.update(context, rd);
-			log.info("Update  new RegistrationData for new user");
+			log.info("Update new RegistrationData for new user");
 
 			// This is a potential problem -- if we create the callback
 			// and then crash, registration will get SNAFU-ed.
@@ -73,6 +73,10 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 
 		log.info("Send email to user");
 		sendEmail(context, email, true, rd);
+		} catch(Exception e) {
+			log.info(e.getMessage());
+			throw e;
+		}
 
 	}
 
