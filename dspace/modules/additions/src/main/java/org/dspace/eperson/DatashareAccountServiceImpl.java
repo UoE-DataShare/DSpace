@@ -1,23 +1,41 @@
+/**
+ * The contents of this file are subject to the license and copyright
+ * detailed in the LICENSE and NOTICE files at the root of the source
+ * tree and available online at
+ *
+ * http://www.dspace.org/license/
+ */
 package org.dspace.eperson;
 
+import org.apache.log4j.Logger;
+import org.dspace.authorize.AuthorizeException;
+import org.dspace.core.*;
+import org.dspace.eperson.service.AccountService;
+import org.dspace.eperson.service.DatashareAccountService;
+import org.dspace.eperson.service.EPersonService;
+import org.dspace.eperson.service.RegistrationDataService;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Locale;
 
-import javax.mail.MessagingException;
-
-import org.apache.log4j.Logger;
-import org.dspace.authorize.AuthorizeException;
-import org.dspace.core.Context;
-import org.dspace.core.Email;
-import org.dspace.core.I18nUtil;
-import org.dspace.eperson.service.AccountService;
-import org.dspace.eperson.service.DatashareAccountService;
-import org.dspace.eperson.service.RegistrationDataService;
-import org.dspace.services.factory.DSpaceServicesFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-
+/**
+ *
+ * Methods for handling registration by email and forgotten passwords. When
+ * someone registers as a user, or forgets their password, the
+ * sendRegistrationInfo or sendForgotPasswordInfo methods can be used to send an
+ * email to the user. The email contains a special token, a long string which is
+ * randomly generated and thus hard to guess. When the user presents the token
+ * back to the system, the AccountManager can use the token to determine the
+ * identity of the eperson.
+ *
+ * *NEW* now ignores expiration dates so that tokens never expire
+ *
+ * @author Peter Breton, John Pinto
+ * @version $Revision$
+ */
 public class DatashareAccountServiceImpl implements DatashareAccountService {
 
 	/** log4j log */
@@ -54,7 +72,7 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 		if (rd == null) {
 			rd = registrationDataService.create(context);
 			log.info("Create new RegistrationData for new user: " + (rd != null));
-			
+			rd.setToken(Utils.generateHexKey());
 			rd.setEmail(email);
 
 			rd.setUun(uun);
@@ -178,8 +196,7 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
     protected void sendEmail(Context context, String email, boolean isRegister, RegistrationData rd)
             throws MessagingException, IOException, SQLException
     {
-        String base = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.url");
-        log.debug("base url: " + base);
+        String base = ConfigurationManager.getProperty("dspace.url");
 
         //  Note change from "key=" to "token="
         String specialLink = new StringBuffer().append(base).append(
@@ -201,6 +218,4 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
                     + " information to " + email);
         }
     }
-
-
 }
