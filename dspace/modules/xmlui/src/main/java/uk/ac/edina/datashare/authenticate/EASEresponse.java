@@ -18,7 +18,7 @@ import org.dspace.core.Context;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.factory.EPersonServiceFactory;
 import org.dspace.eperson.service.EPersonService;
-import org.dspace.content.service.SwordKeyService;
+// import org.dspace.content.service.SwordKeyService;
 
 
 import edu.umich.auth.AuthFilterRequestWrapper;
@@ -43,7 +43,7 @@ public class EASEresponse extends CosignServletCallbackHandler
 
 	private EPersonService epersonService = EPersonServiceFactory.getInstance().getEPersonService();
 
-	private SwordKeyService swordKeyService = DatashareContentServiceFactory.getInstance().getSwordKeyService();
+//	private SwordKeyService swordKeyService = DatashareContentServiceFactory.getInstance().getSwordKeyService();
 
 	/**
 	 * User has successfully logged into EASE, determine if the user has a
@@ -103,12 +103,12 @@ public class EASEresponse extends CosignServletCallbackHandler
 									user,
 									user.getEmail(),
 									uun);
-							try {
-								// generate sword key
-								swordKeyService.insertSwordKey(context, eperson);
-							} catch (AuthorizeException ae) {
-								LOG.warn("Adding swordKey failed: " + ae);
-							}
+//							try {
+//								// generate sword key
+//								swordKeyService.insertSwordKey(context, eperson);
+//							} catch (AuthorizeException ae) {
+//								LOG.warn("Adding swordKey failed: " + ae);
+//							}
 						} 
 
 						context.commit();
