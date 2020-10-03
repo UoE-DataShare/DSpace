@@ -79,7 +79,7 @@ public class SwordKeyServiceImpl  extends DSpaceObjectServiceImpl<SwordKey> impl
 
 	@Override
 	public String fetchSwordKey(Context context, EPerson eperson) throws SQLException {
-		String jpqlQuery = "SELECT sk FROM SwordKey sk where sk.uuid = " + eperson.getID();
+		String jpqlQuery = "SELECT sk FROM SwordKey sk where sk.uuid = '" + eperson.getID() + "'";
 		SwordKey swordKey = swordKeyDAO.findUnique(context, jpqlQuery);
 		if (swordKey == null)
 		{
