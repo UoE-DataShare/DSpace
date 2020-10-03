@@ -74,7 +74,7 @@ public class UUN2EmailServiceImpl  extends DSpaceObjectServiceImpl<UUN2Email> im
 
 	@Override
 	public String fetchUUN(Context context, String email) throws SQLException {
-		String jpqlQuery = "SELECT u FROM UUN2Email u where u.email = " + email;
+		String jpqlQuery = "SELECT u FROM UUN2Email u where u.email = '" + email + "'";
 		UUN2Email uun2Email = uun2EmailDAO.findUnique(context, jpqlQuery);
 		if (uun2Email == null)
 		{

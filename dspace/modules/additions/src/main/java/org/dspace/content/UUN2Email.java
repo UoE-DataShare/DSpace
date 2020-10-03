@@ -16,7 +16,7 @@ public class UUN2Email extends DSpaceObject {
 	
 
 	@Column(name= "uun", unique = true)
-    private String uUN;
+    private String uun;
 	
 	@Column(name= "email")
     private String email;
@@ -29,11 +29,11 @@ public class UUN2Email extends DSpaceObject {
 	}
 	
 	public String getUUN() {
-		return uUN;
+		return uun;
 	}
 
-	public void setUUN(String uUN) {
-		this.uUN = uUN;
+	public void setUUN(String uun) {
+		this.uun = uun;
 	}
 
 	public String getEmail() {
@@ -51,7 +51,7 @@ public class UUN2Email extends DSpaceObject {
 
 	@Override
 	public String getName() {
-		return uUN + ":" + email;
+		return uun + ":" + email;
 	}
 	
 	public UUN2EmailService getUUN2EmailService()
