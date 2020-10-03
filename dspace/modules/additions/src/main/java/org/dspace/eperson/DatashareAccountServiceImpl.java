@@ -100,6 +100,30 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 		return log;
 		
 	}
+	
+	/**
+	 * Log info message.
+	 * 
+	 */
+	public void logInfoMessage(Object message) {
+		log.info(message);
+	}
+	
+	/**
+	 * Log debug message.
+	 * 
+	 */
+	public void logDebugMessage(Object message) {
+		log.debug(message);
+	}
+	/**
+	 * Log error message.
+	 * 
+	 */
+	public void logErrorMessage(Object message) {
+		log.error(message);
+	}
+	
 
 
 	@Override

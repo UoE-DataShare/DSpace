@@ -20,6 +20,26 @@ public interface DatashareAccountService extends AccountService{
 	public Logger getLogger();
 	
 	/**
+	 * Log info message.
+	 * 
+	 */
+	public void logInfoMessage(Object message);
+	
+	/**
+	 * Log debug message.
+	 * 
+	 */
+	public void logDebugMessage(Object message);
+	
+	/**
+	 * Log error message.
+	 * 
+	 */
+	public void logErrorMessage(Object message);
+	
+	
+	
+	/**
 	 * 
 	 * @param context DSpace context
 	 * @param email   Email Address
