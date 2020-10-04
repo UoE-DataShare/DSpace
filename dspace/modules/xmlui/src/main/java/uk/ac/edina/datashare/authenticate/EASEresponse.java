@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.cocoon.environment.http.HttpEnvironment;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.dspace.app.xmlui.utils.AuthenticationUtil;
 import org.dspace.app.xmlui.utils.ContextUtil;
@@ -43,7 +44,7 @@ public class EASEresponse extends CosignServletCallbackHandler
 
 	private EPersonService epersonService = EPersonServiceFactory.getInstance().getEPersonService();
 
-//	private SwordKeyService swordKeyService = DatashareContentServiceFactory.getInstance().getSwordKeyService();
+	//	private SwordKeyService swordKeyService = DatashareContentServiceFactory.getInstance().getSwordKeyService();
 
 	/**
 	 * User has successfully logged into EASE, determine if the user has a
@@ -66,6 +67,7 @@ public class EASEresponse extends CosignServletCallbackHandler
 
 			// get uun from principal name
 			String uun = principal.getName();
+			LOG.info("uun: " + uun);
 
 			try
 			{
@@ -73,15 +75,20 @@ public class EASEresponse extends CosignServletCallbackHandler
 				Context context = ContextUtil.obtainContext(request);
 				EPerson eperson = epersonService.findByNetid(context, uun);
 
+				LOG.info("eperson: " + eperson);
+
 				if(eperson != null)
 				{
+					LOG.info("Found user, so log in");
 					// found user log them in
 					DSpaceAccount.login(context, request, eperson);
 				}
 				else
 				{
+					LOG.info("User not found try LDAP");
 					// user not found try LDAP
 					User user = LDAPAccess.instance().getUserDetailsForUun(uun);
+					LOG.info("Has user be found using LDAP: " + (user != null));
 
 					if(user != null)
 					{
@@ -89,30 +96,50 @@ public class EASEresponse extends CosignServletCallbackHandler
 						eperson = DSpaceUtils.findByEmail(
 								context,
 								user.getEmail());
+						LOG.info("eperson: " + eperson);
 
 						if(eperson != null)
 						{
+							LOG.info("Found eperson, so update Eperson with uun: " + uun);
 							// account exists, update netid
 							DSpaceAccount.updateNetId(context, eperson, uun);
 						}
 						else
 						{
+							LOG.info("Eperson not found, so create Eperson with uun: " + uun);
 							// account doesn't exits create new one
 							eperson = DSpaceAccount.createAccount(
 									context,
 									user,
 									user.getEmail(),
 									uun);
-//							try {
-//								// generate sword key
-//								swordKeyService.insertSwordKey(context, eperson);
-//							} catch (AuthorizeException ae) {
-//								LOG.warn("Adding swordKey failed: " + ae);
-//							}
+							//							Commented out Sword functionality
+							//							try {
+							//								// generate sword key
+							//								swordKeyService.insertSwordKey(context, eperson);
+							//							} catch (AuthorizeException ae) {
+							//								LOG.warn("Adding swordKey failed: " + ae);
+							//							}
 						} 
 
-						context.commit();
+						
 
+						LOG.info("eperson: " + eperson);
+						LOG.info("uun: " + uun);
+						LOG.info("Log in as Eperson");
+						
+						if(eperson != null) {
+							LOG.info("Before login - eperson.getNetid(): " + eperson.getNetid());
+						}
+						
+						if(StringUtils.isNotBlank(uun) && eperson != null && StringUtils.isEmpty(eperson.getNetid()))
+						{
+							LOG.info("Eperson with no uun, so update Eperson with uun: " + uun);
+							// account exists, update netid
+							DSpaceAccount.updateNetId(context, eperson, uun);
+						}
+						
+						context.commit();
 						// log user in
 						DSpaceAccount.login(context, request, eperson);
 					}
