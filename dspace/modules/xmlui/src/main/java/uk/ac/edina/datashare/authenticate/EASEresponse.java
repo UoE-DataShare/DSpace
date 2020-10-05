@@ -122,7 +122,7 @@ public class EASEresponse extends CosignServletCallbackHandler
 							//							}
 						} 
 
-						
+						context.commit();
 
 						LOG.info("eperson: " + eperson);
 						LOG.info("uun: " + uun);
@@ -131,15 +131,7 @@ public class EASEresponse extends CosignServletCallbackHandler
 						if(eperson != null) {
 							LOG.info("Before login - eperson.getNetid(): " + eperson.getNetid());
 						}
-						
-						if(StringUtils.isNotBlank(uun) && eperson != null && StringUtils.isEmpty(eperson.getNetid()))
-						{
-							LOG.info("Eperson with no uun, so update Eperson with uun: " + uun);
-							// account exists, update netid
-							DSpaceAccount.updateNetId(context, eperson, uun);
-						}
-						
-						context.commit();
+		
 						// log user in
 						DSpaceAccount.login(context, request, eperson);
 					}
