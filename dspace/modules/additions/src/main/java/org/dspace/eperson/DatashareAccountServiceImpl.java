@@ -75,7 +75,7 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 			rd.setToken(Utils.generateHexKey());
 			rd.setEmail(email);
 
-			rd.setUun(uun);
+			rd.setUUN(uun);
 
 			registrationDataService.update(context, rd);
 			log.info("Update new RegistrationData for new user");
@@ -87,7 +87,12 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 				log.debug("Created callback " + rd.getID() + " with token " + rd.getToken() + " with email \"" + email
 						+ "\"");
 			}
+		} else {
+			rd.setUUN(uun);
+			registrationDataService.update(context, rd);
+			log.info("Update the RegistrationData for found user");
 		}
+
 
 		log.info("Send email to user");
 		sendEmail(context, email, true, rd);
@@ -169,6 +174,17 @@ public class DatashareAccountServiceImpl implements DatashareAccountService {
 		return accountService.getEmail(context, token);
 	}
 
+	@Override
+	public String getUUN(Context context, String token) throws SQLException {
+		String uun = "";
+		RegistrationData rd = getRegistrationData(context, token);
+	
+		if(rd != null) {
+			uun = rd.getUUN();
+		}
+		
+		return uun;
+	}
 
 	@Override
 	public void deleteToken(Context context, String token) throws SQLException {

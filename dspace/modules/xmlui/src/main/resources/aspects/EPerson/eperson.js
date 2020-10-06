@@ -175,7 +175,9 @@ function doRegister()
     {
         // We have a token. Find out who it's for
         var email = getAccountService().getEmail(getDSContext(), token);
+        var uun = getDatashareAccountService().getUUN(getDSContext(), token);
         getDatashareAccountService().logInfoMessage("We have a token for email " + email);
+        getDatashareAccountService().logInfoMessage("We have a token for uun " + uun);
         
         if (email == null) 
         {
@@ -197,6 +199,9 @@ function doRegister()
             {
                 eperson = AuthenticationUtil.createNewEperson(getObjectModel(),email);
             }
+            
+            // set the uun
+            eperson.setNetid(uun);
             
             // Log the user in so that they can update their own information.
             getDSContext().setCurrentUser(eperson);

@@ -61,4 +61,16 @@ public interface DatashareAccountService extends AccountService{
 	 * @throws SQLException 
 	 */
 	public RegistrationData getRegistrationData(Context context, String token) throws SQLException;
+	
+	 /**
+     * Return the uun of user in registrationdata referred to by a token, or null if 
+     * uun can't be found ignores expiration of token
+     *
+     * @param context
+     *            DSpace context
+     * @param token
+     *            Account token
+     * @return The uun corresponding to token, or null.
+     */
+    public String getUUN(Context context, String token) throws SQLException;
 }
