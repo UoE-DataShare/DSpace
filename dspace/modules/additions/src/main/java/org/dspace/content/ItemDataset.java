@@ -248,7 +248,7 @@ public class ItemDataset  {
 	public URL getURL() {
 		URL url;
 		try {
-			String bUrl[] = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.baseUrl").split("://");
+			String bUrl[] = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.url").split("://");
 			String protocol = bUrl[0];
 			String host = bUrl[1];
 			String fPath = "/download/" + getFileName();
