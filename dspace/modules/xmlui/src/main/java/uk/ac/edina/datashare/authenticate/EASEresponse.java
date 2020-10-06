@@ -72,7 +72,8 @@ public class EASEresponse extends CosignServletCallbackHandler
 			try
 			{
 				// try and get eperson from uun
-				Context context = ContextUtil.obtainContext(request);
+//				Context context = ContextUtil.obtainContext(request);
+				Context context = new Context();
 				EPerson eperson = epersonService.findByNetid(context, uun);
 
 				LOG.info("eperson: " + eperson);
