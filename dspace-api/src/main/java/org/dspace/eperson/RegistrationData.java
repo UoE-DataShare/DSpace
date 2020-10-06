@@ -80,11 +80,11 @@ public class RegistrationData implements ReloadableEntity<Integer> {
         this.expires = expires;
     }
     
-    public String getUun() {
+    public String getUUN() {
 		return uun;
 	}
 
-	public void setUun(String uun) {
+	public void setUUN(String uun) {
 		this.uun = uun;
 	}
 }
