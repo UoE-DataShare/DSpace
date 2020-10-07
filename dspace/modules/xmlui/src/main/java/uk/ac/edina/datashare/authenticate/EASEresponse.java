@@ -15,6 +15,7 @@ import org.dspace.app.xmlui.utils.AuthenticationUtil;
 import org.dspace.app.xmlui.utils.ContextUtil;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.factory.DatashareContentServiceFactory;
+import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.eperson.EPerson;
 import org.dspace.eperson.factory.EPersonServiceFactory;
@@ -41,6 +42,8 @@ public class EASEresponse extends CosignServletCallbackHandler
 
 	/** The ease university user name attribute name */
 	public static final String EASE_UUN = "ease.uun";
+	
+	private static final String LOCATION = "Location";
 
 	private EPersonService epersonService = EPersonServiceFactory.getInstance().getEPersonService();
 
@@ -154,10 +157,22 @@ public class EASEresponse extends CosignServletCallbackHandler
 
 				try
 				{
+					LOG.info("url: "  + url);
+					LOG.info("interruptUrl: " + interruptUrl);
+					LOG.info("response.containsHeader(LOCATION): " + response.containsHeader(LOCATION));
+					
+					String dspaceUrl = ConfigurationManager.getProperty("dspace.url") ;
+					if(StringUtils.isEmpty(dspaceUrl)) {
+						dspaceUrl = "/";
+					}
+					LOG.info("dspaceUrl: "  + dspaceUrl);
+
+					if(StringUtils.isEmpty(url)) {
+						url = dspaceUrl;
+					}
 					if(interruptUrl == null){
 						response.sendRedirect(url);
-					}
-					else{
+					} else{
 						response.sendRedirect(interruptUrl);
 					}
 				}
