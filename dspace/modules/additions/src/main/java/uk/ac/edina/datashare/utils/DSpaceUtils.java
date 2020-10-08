@@ -29,6 +29,7 @@ import org.dspace.content.factory.ContentServiceFactory;
 import org.dspace.content.service.BitstreamService;
 import org.dspace.content.service.CollectionService;
 import org.dspace.content.service.ItemService;
+import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.core.LogManager;
 import org.dspace.eperson.EPerson;
@@ -388,10 +389,13 @@ public class DSpaceUtils {
 		// ensures they are password users
 		List<Group> specialGroups = new ArrayList<Group>(0);
 		try {
-			String groupName = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("authentication-password", "login.specialgroup");
+			String groupName = ConfigurationManager.getProperty("authentication-password", "login.specialgroup");
+			
+			LOG.info("groupName: " + groupName);
 			if ((groupName != null) && (!groupName.trim().equals(""))) {
 				GroupService groupService = EPersonServiceFactory.getInstance().getGroupService();
 				Group specialGroup = groupService.findByName(context, groupName);
+				LOG.info("Found specialGroup: " + (specialGroup != null));
 				if (specialGroup == null) {
 					// Oops - the group isn't there.
 					LOG.warn(LogManager.getHeader(context, "password_specialgroup",
