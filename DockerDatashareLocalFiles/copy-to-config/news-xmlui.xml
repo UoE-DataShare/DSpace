@@ -12,9 +12,9 @@
       <!--<p rend="important-para">
           Please note the system will be going down for maintainance on 25 Aug 27th at 08.30-09.00 and 17.30-20.00 GMT
           </p>-->
-      <!--<p rend="important-para">
-          Please note the system will be at risk on Fri 23rd Feb between 09.00 and 10.00 GMT
-      </p>-->
+      <p rend="important-para">
+          Please note this is a development version of Datashare please click here for the live service <xref target="https://datashare.is.ed.ac.uk" >Datashare</xref>
+      </p>
     </div>
     <div id="home-welcome-deposit">
       <head>
