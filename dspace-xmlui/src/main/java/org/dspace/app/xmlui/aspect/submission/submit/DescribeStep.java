@@ -1163,7 +1163,7 @@ public class DescribeStep extends AbstractSubmissionStep
         	// dspace.url fails
         	//String vocabularyUrl = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.url");
             // we use dspace.baseUrl to fix
-            String vocabularyUrl = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.baseUrl");
+            String vocabularyUrl = DSpaceServicesFactory.getInstance().getConfigurationService().getProperty("dspace.url");
             vocabularyUrl += "/JSON/controlled-vocabulary?vocabularyIdentifier=" + dcInput.getVocabulary();
             // DATASHARE - end 
             
