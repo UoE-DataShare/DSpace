@@ -185,7 +185,7 @@ public class ClamScan extends AbstractCurationTask {
 
 		try {
 			// spawn clamscan process and wait for result
-			Process p = Runtime.getRuntime().exec(new String[] { "clamdscan",  "-fdpass", file.getPath() });
+			Process p = Runtime.getRuntime().exec(new String[] { "clamdscan",  "--fdpass", file.getPath() });
 
 			p.waitFor();
 			int retVal = p.exitValue();
