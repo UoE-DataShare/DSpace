@@ -300,12 +300,14 @@
         company as well. We have to ensure to use URIs of our prefix
         as primary identifiers only.
     -->
+    <!-- DATSHARE  start -->
     <xsl:template match="dspace:field[@mdschema='dc' and @element='identifier' and @qualifier and starts-with(., concat('https://doi.org/', $prefix))]">
         <identifier identifierType="DOI">
-            <xsl:value-of select="substring(., 19)"/>
+            <xsl:value-of select="substring(., 17)"/>
         </identifier>
     </xsl:template>
-
+    <!--  substring(., 19)  changed to substring(., 17) -->
+    <!-- DATSHARE  end-->
     <!-- DataCite (2) :: Creator -->
     <xsl:template match="//dspace:field[@mdschema='dc' and @element='contributor' and @qualifier='author']">
         <creator>
