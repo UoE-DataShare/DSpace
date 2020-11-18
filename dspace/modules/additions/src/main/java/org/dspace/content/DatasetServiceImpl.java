@@ -172,8 +172,8 @@ public class DatasetServiceImpl  extends DSpaceObjectServiceImpl<Dataset> implem
 	
 	protected Dataset findDatsetByFileName(Context context, String fileName) {
 		// When we move files we can have duplicates so we only want the latest
-		String jpqlQuery = "SELECT dset FROM Dataset dset where dset.fileName = " + fileName + 
-				" and dset.id = (SELECT MAX(dset.id) FROM Dataset dset where dset.fileName = '" + fileName +"')";
+		String jpqlQuery = "SELECT dset FROM Dataset dset where dset.fileName = '" + fileName + 
+				"' and dset.id = (SELECT MAX(dset.id) FROM Dataset dset where dset.fileName = '" + fileName +"')";
 		log.debug("jpqlQuery: " + jpqlQuery);
 		Dataset dataset;
 		try {
