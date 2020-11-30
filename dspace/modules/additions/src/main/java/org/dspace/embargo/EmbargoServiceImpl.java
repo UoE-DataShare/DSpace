@@ -13,23 +13,28 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.mail.MessagingException;
+
 import org.apache.log4j.Logger;
 import org.dspace.authorize.AuthorizeException;
-import org.dspace.content.DCDate;
-import org.dspace.content.Item;
-import org.dspace.content.MetadataSchema;
-import org.dspace.content.MetadataValue;
+import org.dspace.content.*;
 import org.dspace.content.service.ItemService;
+import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
+import org.dspace.core.Email;
+import org.dspace.core.I18nUtil;
 import org.dspace.core.service.PluginService;
 import org.dspace.embargo.service.EmbargoService;
 import org.dspace.services.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import uk.ac.edina.datashare.utils.MetaDataUtil;
+
 /**
  * Public interface to the embargo subsystem.
  * <p>
- * Configuration properties: (with examples) {@code
+ * Configuration properties: (with examples)
+ * {@code
  *   # DC metadata field to hold the user-supplied embargo terms
  *   embargo.field.terms = dc.embargo.terms
  *   # DC metadata field to hold computed "lift date" of embargo
@@ -41,11 +46,11 @@ import org.springframework.beans.factory.annotation.Autowired;
  *   # implementation of embargo lifter plugin
  *   plugin.single.org.dspace.embargo.EmbargoLifter = edu.my.Lifter
  * }
- * 
  * @author Larry Stone
  * @author Richard Rodgers
  */
-public class EmbargoServiceImpl implements EmbargoService {
+public class EmbargoServiceImpl implements EmbargoService
+{
 
 	/** log4j category */
 	private final Logger log = Logger.getLogger(EmbargoServiceImpl.class);
@@ -76,38 +81,48 @@ public class EmbargoServiceImpl implements EmbargoService {
 	@Autowired(required = true)
 	protected PluginService pluginService;
 
-	protected EmbargoServiceImpl() {
+	protected EmbargoServiceImpl()
+	{
 
 	}
 
 	@Override
-	public void setEmbargo(Context context, Item item) throws SQLException, AuthorizeException {
+	public void setEmbargo(Context context, Item item)
+			throws SQLException, AuthorizeException
+	{
 		// if lift is null, we might be restoring an item from an AIP
 		DCDate myLift = getEmbargoTermsAsDate(context, item);
-		if (myLift == null) {
-			if ((myLift = recoverEmbargoDate(item)) == null) {
+		if (myLift == null)
+		{
+			if ((myLift = recoverEmbargoDate(item)) == null)
+			{
 				return;
 			}
 		}
 		String slift = myLift.toString();
-		try {
+		try
+		{
 			context.turnOffAuthorisationSystem();
 			itemService.clearMetadata(context, item, lift_schema, lift_element, lift_qualifier, Item.ANY);
 			itemService.addMetadata(context, item, lift_schema, lift_element, lift_qualifier, null, slift);
-			log.info("Set embargo on Item " + item.getHandle() + ", expires on: " + slift);
+			log.info("Set embargo on Item "+item.getHandle()+", expires on: "+slift);
 
 			setter.setEmbargo(context, item);
 
 			itemService.update(context, item);
-		} finally {
+		}
+		finally
+		{
 			context.restoreAuthSystemState();
 		}
 	}
 
 	@Override
-	public DCDate getEmbargoTermsAsDate(Context context, Item item) throws SQLException, AuthorizeException {
-		List<MetadataValue> terms = itemService.getMetadata(item, terms_schema, terms_element, terms_qualifier,
-				Item.ANY);
+	public DCDate getEmbargoTermsAsDate(Context context, Item item)
+			throws SQLException, AuthorizeException
+	{
+		List<MetadataValue> terms = itemService.getMetadata(item, terms_schema, terms_element,
+				terms_qualifier, Item.ANY);
 
 		DCDate result = null;
 
@@ -115,53 +130,120 @@ public class EmbargoServiceImpl implements EmbargoService {
 		if (terms == null)
 			return null;
 
-		result = setter.parseTerms(context, item, terms.size() > 0 ? terms.get(0).getValue() : null);
+		result = setter.parseTerms(context, item,
+				terms.size() > 0 ? terms.get(0).getValue() : null);
 
 		if (result == null)
 			return null;
 
 		// new DCDate(non-date String) means toDate() will return null
 		Date liftDate = result.toDate();
-		if (liftDate == null) {
-			throw new IllegalArgumentException("Embargo lift date is uninterpretable:  " + result.toString());
+		if (liftDate == null)
+		{
+			throw new IllegalArgumentException(
+					"Embargo lift date is uninterpretable:  "
+							+ result.toString());
 		}
 
 		/*
-		 * NOTE: We do not check here for past dates as it can result in errors during
-		 * AIP restoration. Therefore, UIs should perform any such date validation on
-		 * input. See DS-3348
+		 * NOTE: We do not check here for past dates as it can result in errors during AIP restoration. 
+		 * Therefore, UIs should perform any such date validation on input. See DS-3348
 		 */
 		return result;
 	}
 
+
 	@Override
-	public void liftEmbargo(Context context, Item item) throws SQLException, AuthorizeException, IOException {
-		// Since 3.0 the lift process for all embargoes is performed through the dates
-		// on the authorization process (see DS-2588)
+	public void liftEmbargo(Context context, Item item)
+			throws SQLException, AuthorizeException, IOException
+	{
+		// Since 3.0 the lift process for all embargoes is performed through the dates on the authorization process (see DS-2588)
 		// lifter.liftEmbargo(context, item);
 		itemService.clearMetadata(context, item, lift_schema, lift_element, lift_qualifier, Item.ANY);
 
 		// set the dc.date.available value to right now
 		itemService.clearMetadata(context, item, MetadataSchema.DC_SCHEMA, "date", "available", Item.ANY);
-		itemService.addMetadata(context, item, MetadataSchema.DC_SCHEMA, "date", "available", null,
-				DCDate.getCurrent().toString());
+		itemService.addMetadata(context, item, MetadataSchema.DC_SCHEMA, "date", "available", null, DCDate.getCurrent().toString());
 
-		log.info("Lifting embargo on Item " + item.getHandle());
+		log.info("Lifting embargo on Item "+item.getHandle());
 		itemService.update(context, item);
 	}
 
+
+	// DATASHARE - start
+	/**
+	 * Check for any items whose embargo is about to expire.
+	 * @param context
+	 */
+	public void checkForExpiry(Context context){
+		try{
+			Date now = new Date();
+			Iterator<Item> ii = findItemsByLiftMetadata(context);
+			while (ii.hasNext()){
+				Item item = ii.next();
+				DCDate liftDate = getEmbargoTermsAsDate(context, item);
+
+				if (liftDate != null){
+
+					long diff = Math.abs(liftDate.toDate().getTime() - now.getTime());
+					long diffDays = diff / (24 * 60 * 60 * 1000);
+
+					if(diffDays == 7){
+						String submitter = item.getSubmitter().getEmail();
+						String admin = ConfigurationManager.getProperty("mail.admin");
+
+						if(!ConfigurationManager.getBooleanProperty("mail.server.disabled")){
+							Email mail = Email.getEmail(
+									I18nUtil.getEmailFilename(context.getCurrentLocale(), "embargo_expire"));
+							mail.addArgument(MetaDataUtil.getTitle(item));
+							mail.addArgument(ConfigurationManager.getProperty("handle.canonical.prefix") + item.getHandle());
+							mail.addArgument(liftDate.displayDate(false, true, context.getCurrentLocale()));
+
+							mail.addRecipient(submitter);
+
+							if(!submitter.equals(admin)){
+								mail.addRecipient(admin);
+							}
+
+							try{
+								log.info("Sending email for embargo expiry message. Sent to " +
+										submitter + ", " + admin + " for " + item.getHandle());
+								mail.send();
+							}
+							catch(MessagingException ex){
+								log.error("Problem sending embargo expiry message: " + ex);
+							}
+						}
+						else{
+							log.info("Mail sending is disabled. Embargo expiry message would have been sent to " +
+									submitter + ", " + admin + " for " + item.getHandle());
+						}
+					}
+				}
+			}
+		}
+		catch(AuthorizeException ex){throw new RuntimeException(ex);}
+		catch(SQLException ex){throw new RuntimeException(ex);}
+		catch(IOException ex){throw new RuntimeException(ex);}
+	}    
+	// DATASHARE - end
+
+
 	/**
 	 * Initialize the bean (after dependency injection has already taken place).
-	 * Ensures the configurationService is injected, so that we can get plugins and
-	 * MD field settings from config. Called by "init-method" in Spring config.
+	 * Ensures the configurationService is injected, so that we can
+	 * get plugins and MD field settings from config.
+	 * Called by "init-method" in Spring config.
 	 */
-	public void init() throws Exception {
-		if (terms_schema == null) {
+	public void init() throws Exception
+	{
+		if (terms_schema == null)
+		{
 			String terms = configurationService.getProperty("embargo.field.terms");
 			String lift = configurationService.getProperty("embargo.field.lift");
-			if (terms == null || lift == null) {
-				throw new IllegalStateException(
-						"Missing one or more of the required DSpace configuration properties for EmbargoManager, check your configuration file.");
+			if (terms == null || lift == null)
+			{
+				throw new IllegalStateException("Missing one or more of the required DSpace configuration properties for EmbargoManager, check your configuration file.");
 			}
 			terms_schema = getSchemaOf(terms);
 			terms_element = getElementOf(terms);
@@ -170,33 +252,36 @@ public class EmbargoServiceImpl implements EmbargoService {
 			lift_element = getElementOf(lift);
 			lift_qualifier = getQualifierOf(lift);
 
-			setter = (EmbargoSetter) pluginService.getSinglePlugin(EmbargoSetter.class);
-			if (setter == null) {
+			setter = (EmbargoSetter)pluginService.getSinglePlugin(EmbargoSetter.class);
+			if (setter == null)
+			{
 				throw new IllegalStateException("The EmbargoSetter plugin was not defined in DSpace configuration.");
 			}
-			lifter = (EmbargoLifter) pluginService.getSinglePlugin(EmbargoLifter.class);
-			if (lifter == null) {
+			lifter = (EmbargoLifter)pluginService.getSinglePlugin(EmbargoLifter.class);
+			if (lifter == null)
+			{
 				throw new IllegalStateException("The EmbargoLifter plugin was not defined in DSpace configuration.");
 			}
 		}
 	}
 
 	// return the schema part of "schema.element.qualifier" metadata field spec
-	protected String getSchemaOf(String field) {
+	protected String getSchemaOf(String field)
+	{
 		String sa[] = field.split("\\.", 3);
 		return sa[0];
 	}
 
-	// return the element part of "schema.element.qualifier" metadata field spec, if
-	// any
-	protected String getElementOf(String field) {
+	// return the element part of "schema.element.qualifier" metadata field spec, if any
+	protected String getElementOf(String field)
+	{
 		String sa[] = field.split("\\.", 3);
 		return sa.length > 1 ? sa[1] : null;
 	}
 
-	// return the qualifier part of "schema.element.qualifier" metadata field spec,
-	// if any
-	protected String getQualifierOf(String field) {
+	// return the qualifier part of "schema.element.qualifier" metadata field spec, if any
+	protected String getQualifierOf(String field)
+	{
 		String sa[] = field.split("\\.", 3);
 		return sa.length > 2 ? sa[2] : null;
 	}
@@ -206,10 +291,12 @@ public class EmbargoServiceImpl implements EmbargoService {
 	protected DCDate recoverEmbargoDate(Item item) {
 		DCDate liftDate = null;
 		List<MetadataValue> lift = itemService.getMetadata(item, lift_schema, lift_element, lift_qualifier, Item.ANY);
-		if (lift.size() > 0) {
+		if (lift.size() > 0)
+		{
 			liftDate = new DCDate(lift.get(0).getValue());
 			// sanity check: do not allow an embargo lift date in the past.
-			if (liftDate.toDate().before(new Date())) {
+			if (liftDate.toDate().before(new Date()))
+			{
 				liftDate = null;
 			}
 		}
@@ -222,13 +309,13 @@ public class EmbargoServiceImpl implements EmbargoService {
 	}
 
 	@Override
-	public List<MetadataValue> getLiftMetadata(Context context, Item item) {
+	public List<MetadataValue> getLiftMetadata(Context context, Item item)
+	{
 		return itemService.getMetadata(item, lift_schema, lift_element, lift_qualifier, Item.ANY);
 	}
 
 	@Override
-	public Iterator<Item> findItemsByLiftMetadata(Context context)
-			throws SQLException, IOException, AuthorizeException {
+	public Iterator<Item> findItemsByLiftMetadata(Context context) throws SQLException, IOException, AuthorizeException {
 		return itemService.findByMetadataField(context, lift_schema, lift_element, lift_qualifier, Item.ANY);
 	}
 }
