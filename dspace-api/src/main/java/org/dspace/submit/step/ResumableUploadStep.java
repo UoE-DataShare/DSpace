@@ -74,7 +74,11 @@ public class ResumableUploadStep extends UploadStep{
                     String val = request.getParameter(key.toString()); 
                     if(val != null && val.length() > 0)
                     {
-                        UUID bistreamId = UUID.fromString(key.split("-")[1]);
+                    	// DATASHARE - start
+                        // UUID bistreamId = UUID.fromString(key.split("-")[1]);
+                    	String uuidString = key.replace("description-", "");
+                    	UUID bistreamId = UUID.fromString(uuidString);
+                    	// DATASHARE - end
 
                         Bitstream b = bitstreamService.find(context, bistreamId);
                         b.setDescription(context, val);
