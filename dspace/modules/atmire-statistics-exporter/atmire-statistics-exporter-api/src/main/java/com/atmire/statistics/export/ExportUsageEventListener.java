@@ -208,7 +208,11 @@ public class ExportUsageEventListener extends AbstractUsageEventListener {
 
     private void processItem(Context context, Item item, Bitstream bitstream, HttpServletRequest request, String eventType) throws IOException, SQLException {
         //We have a valid url collect the rest of the data
-        String clientIP = request.getRemoteAddr();
+    	
+    	// DATASHARE - start
+        // String clientIP = request.getRemoteAddr();
+        String clientIP = ExportUsageEventListener.getIPAddress(request);
+        // DATASHARE - start
         if (configurationService.getBooleanProperty("useProxies", false) && request.getHeader("X-Forwarded-For") != null) {
             /* This header is a comma delimited list */
             for (String xfip : request.getHeader("X-Forwarded-For").split(",")) {
@@ -412,4 +416,44 @@ public class ExportUsageEventListener extends AbstractUsageEventListener {
         }
         return null;
     }
+    
+    // DATASHARE - start
+    /**
+     * @param request HHTP request.
+     * @return User's ip address 
+     */
+    private static String getIPAddress(HttpServletRequest request){
+        // Set the session ID and IP address
+        String ip = request.getRemoteAddr();
+        ConfigurationService configurationService =  DSpaceServicesFactory.getInstance().getConfigurationService();
+        if(configurationService.getBooleanProperty("useProxies", false)){
+            if(request.getHeader("X-Forwarded-For") != null){
+                ip = getXForwardedFor("X-Forwarded-For", request, ip);
+            }
+            else if(request.getHeader("NS-X-Forwarded-For") != null){
+                ip = getXForwardedFor("NS-X-Forwarded-For", request, ip);
+            }
+        }
+        
+        return ip;
+    }
+    
+    /**
+     * @param header HTTP header.
+     * @param request HTTP request.
+     * @param ra Remote client ip address.
+     * @return X Forwarded for address.
+     */
+    private static String getXForwardedFor(String header, HttpServletRequest request, String ra){
+        String ip = null;
+        for(String xfip : request.getHeader(header).split(",")){
+            if(!request.getHeader(header).contains(ra)){
+                ip = xfip.trim();
+                break;
+            }
+        }
+        
+        return ip;
+    }    
+    // DATASHARE - end
 }
