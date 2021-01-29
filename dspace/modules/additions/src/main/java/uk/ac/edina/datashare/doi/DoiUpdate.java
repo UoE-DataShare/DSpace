@@ -117,30 +117,29 @@ public class DoiUpdate {
 			while (iter.hasNext()) {
 				Item item = iter.next();
 
-				if (!DSpaceUtils.hasEmbargo(context, item)) {
-					String citation = MetaDataUtil.getCitation(item);
+				String citation = MetaDataUtil.getCitation(item);
 
-					if (citation == null) {
-						DSpaceUtils.updateCitation(context, item);
-					} else if (!citation.contains(DSpaceUtils.DOI_URL) && DSpaceUtils.hasDoi(item)) {
-						MetaDataUtil.clearCitation(context, item);
-						DSpaceUtils.updateCitation(context, item);
-						System.out.println(
-								"Item " + item.getID() + " has new citation: " + MetaDataUtil.getCitation(item));
-					} else {
-						if (!DSpaceUtils.hasDoi(item)) {
-							System.out.println("Ignoring " + item.getID() + ". contains doi: "
-									+ citation.contains(DSpaceUtils.DOI_URL) + ". hasDoi: " + DSpaceUtils.hasDoi(item));
-						}
-						continue;
+				if (citation == null) {
+					DSpaceUtils.updateCitation(context, item);
+				} else if (!citation.contains(DSpaceUtils.DOI_URL) && DSpaceUtils.hasDoi(item)) {
+					MetaDataUtil.clearCitation(context, item);
+					DSpaceUtils.updateCitation(context, item);
+					System.out.println(
+							"Item " + item.getID() + " has new citation: " + MetaDataUtil.getCitation(item));
+				} else {
+					if (!DSpaceUtils.hasDoi(item)) {
+						System.out.println("Ignoring " + item.getID() + ". contains doi: "
+								+ citation.contains(DSpaceUtils.DOI_URL) + ". hasDoi: " + DSpaceUtils.hasDoi(item));
 					}
-
-					try {
-						itemService.update(context, item);
-					} catch (AuthorizeException ex) {
-						throw new RuntimeException(ex);
-					}
+					continue;
 				}
+
+				try {
+					itemService.update(context, item);
+				} catch (AuthorizeException ex) {
+					throw new RuntimeException(ex);
+				}
+
 			}
 
 			context.complete();
