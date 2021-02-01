@@ -699,40 +699,55 @@ public class Util {
     }
     
     /**
-     * @param request HHTP request.
+     * @param request HTTP request.
      * @return User's ip address 
      */
     public static String getIPAddress(HttpServletRequest request){
+    	// debuglogRequestHeaders(request);
         // Set the session ID and IP address
         String ip = request.getRemoteAddr();
         ConfigurationService configurationService =  DSpaceServicesFactory.getInstance().getConfigurationService();
-        if(configurationService.getBooleanProperty("useProxies", false)){
-            if(request.getHeader("X-Forwarded-For") != null){
-                ip = getXForwardedFor("X-Forwarded-For", request, ip);
+        if(!configurationService.getBooleanProperty("useProxies", false)){
+        	// DATASHARE - start 
+            // (reversed previous if order to ensure NS-X-Forwarded-For looked for first) 
+        	 if(request.getHeader("NS-X-Forwarded-For") != null){
+                 ip = getXForwardedFor("NS-X-Forwarded-For", request);
+             } else if(request.getHeader("X-Forwarded-For") != null){
+                ip = getXForwardedFor("X-Forwarded-For", request);
             }
-            else if(request.getHeader("NS-X-Forwarded-For") != null){
-                ip = getXForwardedFor("NS-X-Forwarded-For", request, ip);
-            }
+        	// DATASHARE - end
         }
         
         return ip;
     }
     
+    // Code to display Request Headers for debugging
+    private static void debuglogRequestHeaders(HttpServletRequest request) {
+        @SuppressWarnings("unchecked")
+		Enumeration<String> headerNames = request.getHeaderNames();
+        log.debug("----------------------------------------------------------------------");
+        log.debug("Header Names:");
+        
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            log.debug(key + ": " + value);
+        }
+        log.debug("----------------------------------------------------------------------");
+        
+    }
+    
     /**
      * @param header HTTP header.
      * @param request HTTP request.
-     * @param ra Remote client ip address.
      * @return X Forwarded for address.
      */
-    private static String getXForwardedFor(String header, HttpServletRequest request, String ra){
-        String ip = null;
-        for(String xfip : request.getHeader(header).split(",")){
-            if(!request.getHeader(header).contains(ra)){
-                ip = xfip.trim();
-                break;
-            }
-        }
-        
+    private static String getXForwardedFor(String header, HttpServletRequest request){
+    	String ip = null;
+    	if(request.getHeader(header) != null) {
+    		ip = request.getHeader(header).trim();
+    	}
+        log.debug(header + ": " + ip);
         return ip;
     }    
     // DATASHARE - end
