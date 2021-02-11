@@ -58,6 +58,7 @@ import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.UUID;
 
@@ -208,7 +209,11 @@ public class ExportUsageEventListener extends AbstractUsageEventListener {
 
     private void processItem(Context context, Item item, Bitstream bitstream, HttpServletRequest request, String eventType) throws IOException, SQLException {
         //We have a valid url collect the rest of the data
-        String clientIP = request.getRemoteAddr();
+    	
+    	// DATASHARE - start
+        // String clientIP = request.getRemoteAddr();
+        String clientIP = ExportUsageEventListener.getIPAddress(request);
+        // DATASHARE - start
         if (configurationService.getBooleanProperty("useProxies", false) && request.getHeader("X-Forwarded-For") != null) {
             /* This header is a comma delimited list */
             for (String xfip : request.getHeader("X-Forwarded-For").split(",")) {
@@ -412,4 +417,59 @@ public class ExportUsageEventListener extends AbstractUsageEventListener {
         }
         return null;
     }
+    
+    // DATASHARE - start
+    /**
+     * @param request HTTP request.
+     * @return User's ip address 
+     */
+    private static String getIPAddress(HttpServletRequest request){
+        //    	debuglogRequestHeaders(request);
+        // Set the session ID and IP address
+        String ip = request.getRemoteAddr();
+        ConfigurationService configurationService =  DSpaceServicesFactory.getInstance().getConfigurationService();
+        if(!configurationService.getBooleanProperty("useProxies", false)){
+        	// DATASHARE - start 
+            // (reversed previous if order to ensure NS-X-Forwarded-For looked for first) 
+        	 if(request.getHeader("NS-X-Forwarded-For") != null){
+                 ip = getXForwardedFor("NS-X-Forwarded-For", request);
+             } else if(request.getHeader("X-Forwarded-For") != null){
+                ip = getXForwardedFor("X-Forwarded-For", request);
+            }
+        	// DATASHARE - end
+        }
+        
+        return ip;
+    }
+    
+    // Code to display Request Headers for debugging
+    private static void debuglogRequestHeaders(HttpServletRequest request) {
+        @SuppressWarnings("unchecked")
+		Enumeration<String> headerNames = request.getHeaderNames();
+        log.debug("----------------------------------------------------------------------");
+        log.debug("Header Names:");
+        
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            log.debug(key + ": " + value);
+        }
+        log.debug("----------------------------------------------------------------------");
+        
+    }
+    
+    /**
+     * @param header HTTP header.
+     * @param request HTTP request.
+     * @return X Forwarded for address.
+     */
+    private static String getXForwardedFor(String header, HttpServletRequest request){
+    	String ip = null;
+    	if(request.getHeader(header) != null) {
+    		ip = request.getHeader(header).trim();
+    	}
+        
+        return ip;
+    }    
+    // DATASHARE - end
 }
