@@ -59,6 +59,7 @@ import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.curate.Curator;
 import org.dspace.eperson.EPerson;
+import org.dspace.eperson.Group;
 
 //DATASHARE specific class
 
@@ -103,19 +104,25 @@ public class ResumableUpload extends AbstractAction
 	 */
 	private void init(Request request)
 	{
+		log.debug("ResumableUpload: Init Start");
 		String sId = request.getParameter("submissionId");
-
+		log.debug("SubmissionId: '" + sId + "'");
 		if(!sId.isEmpty()){
 			// parent directory containing all bitstreams related to a submission
 			this.submissionDir = tempDir + File.separator + request.getParameter("submissionId");
+			log.debug("SubmissionDir: '" + this.submissionDir + "'");
 
 			// directory containing chunks of an individual bitstream
 			this.chunkDir = this.submissionDir + File.separator + request.getParameter("resumableIdentifier");
+			log.debug("ChunkDir: '" + this.chunkDir + "'");
+			log.debug("ResumableIdentifier: '" + request.getParameter("resumableIdentifier") + "'");
 
 			// create upload directories if required
 			File uploadDir = new File(this.submissionDir);
+			log.debug("UploadDir: '" + uploadDir.getAbsolutePath() + "'");
 			if(!uploadDir.exists())
 			{
+				log.debug("Making upload dir");
 				uploadDir.mkdir();
 			}
 
@@ -124,10 +131,12 @@ public class ResumableUpload extends AbstractAction
 				File finalDir = new File(this.chunkDir);
 				if (!finalDir.exists())
 				{
+					log.debug("Making chunk / final dir");
 					finalDir.mkdir();
 				}
 			}
 		}
+		log.debug("ResumableUpload: Init End");
 	}
 
 	/*
@@ -586,7 +595,7 @@ public class ResumableUpload extends AbstractAction
 				return;
 			}
 		}
-
+		log.debug("ResumableUpload: processFile virus check passed");
 		// Virus check good, attach file to DSpace item
 		try
 		{
@@ -594,7 +603,8 @@ public class ResumableUpload extends AbstractAction
 			Context ctx = new Context();
 			ctx.setCurrentUser(user);
 
-			log.info("Create bitstream for user " + user.getEmail() + " submissionId: " + submissionId);
+			log.info("Create bitstream for user " + user.getEmail() + " submissionId: " + submissionId +
+					" resumableIdentifier: '" + resumableIdentifier + "'");
 
 			// find item
 			InProgressSubmission ips = workspaceItemService.find(ctx, submissionId);
@@ -775,6 +785,7 @@ public class ResumableUpload extends AbstractAction
 		 */
 		private File makeFileFromChunks() throws IOException
 		{
+			log.debug("ResumableUpload: makeFileFromChunks start");
 			String chunkPath = ResumableUpload.this.chunkDir + File.separator + "part";
 			File destFile = null;
 
@@ -837,11 +848,22 @@ public class ResumableUpload extends AbstractAction
 				} 
 				catch (IOException ex){}
 			}
-
+			log.debug("ResumableUpload: makeFileFromChunks end");
 			return destFile;
 		}        
 
 		public void run() {
+			log.debug("ResumableUpload: Run start");
+			log.debug("User: '" + this.user.getID() + "'");
+			if (this.user.getGroups() != null && ! this.user.getGroups().isEmpty()) {
+				for (Group group : this.user.getGroups()) {
+					log.debug("Group: '" + group.getName() + " (" + group.getID() + ")'");
+				}
+			}
+			log.debug("SubmissionId: '" + this.submissionId + "'");
+			log.debug("Session: '" + this.session.toString() + "'");
+			log.debug("ResumableIdentifier: '" + this.resumableIdentifier + "'");
+
 			try
 			{
 				// recreate file from chunks and process file
@@ -856,6 +878,7 @@ public class ResumableUpload extends AbstractAction
 			{
 				log.error(ex);
 			}
+			log.debug("ResumableUpload: Run end");
 		}
 	}
 
