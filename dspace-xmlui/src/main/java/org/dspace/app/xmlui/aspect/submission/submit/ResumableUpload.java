@@ -287,6 +287,9 @@ public class ResumableUpload extends AbstractAction
 		File chunk = new File(chunkPath);
 
 		log.debug("rename file " + chunkOrg + " to " + chunk);
+		
+		log.debug("CHUNKS: resumableChunkNumber: " + resumableChunkNumber);
+		log.debug("CHUNKS: resumableTotalChunks: " + resumableTotalChunks);
 
 		if(chunkOrg.renameTo(chunk))
 		{
@@ -613,9 +616,11 @@ public class ResumableUpload extends AbstractAction
 			}
 
 			ctx.complete();
-
+			
+			log.debug("Setting in Session BITSTREAM ID of resumableIdentifier " + resumableIdentifier + ": " + b.getID());
 			// all good, store bitstream id in session
 			session.setAttribute(resumableIdentifier, b.getID());
+			log.debug("Setin Session  BITSTREAM ID of resumableIdentifier " + resumableIdentifier + ": " + b.getID());
 		}
 		catch(SQLException ex)
 		{
@@ -775,7 +780,7 @@ public class ResumableUpload extends AbstractAction
 		 */
 		private File makeFileFromChunks() throws IOException
 		{
-			String chunkPath = ResumableUpload.this.chunkDir + File.separator + "part";
+			String chunkPath = ResumableUpload.this.chunkDir + File.separator + "part[";
 			File destFile = null;
 
 			String destFilePath = ResumableUpload.this.chunkDir + File.separator +
@@ -789,7 +794,13 @@ public class ResumableUpload extends AbstractAction
 
 				for (int i = 1; i <= this.resumableTotalChunks; i++) 
 				{
-					File fi = new File(chunkPath.concat(Integer.toString(i)));
+					// New resumable.js version 1.1.0 part chunks are of for part[i, i] with space after comma, e.g., part[5, 5].
+			        // 
+					
+					String chunkFileFullPath = chunkPath.concat(Integer.toString(i) + ", " +  Integer.toString(i) + "]");
+					log.debug("CHUNKS - chunkFileFullPath: " + chunkFileFullPath);
+					
+					File fi = new File(chunkFileFullPath);
 					try 
 					{
 						InputStream is = new FileInputStream(fi);

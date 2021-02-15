@@ -42,16 +42,16 @@
 	if(sId > 0){
 		r = new Resumable({
 			target: url,
-			chunkSize: 1024 * 1024,
+			chunkSize: 2*1024 * 1024,
 			simultaneousUploads: 1,
 			testChunks: true,
 			throttleProgressCallbacks: 1,
 
 			// remove, for testing
-			xhrTimeout: 60000,
+			xhrTimeout: 30000,
 			//xhrTimeout: 5000,
 
-			maxChunkRetries: 5,
+			maxChunkRetries: 20,
 			//maxChunkRetries: 3,
 
 			chunkRetryInterval: 5000,
@@ -167,6 +167,7 @@
 
 		r.on('fileProgress', function(file){
 			// Handle progress for both the file and the overall upload
+			console.log("r.progress(): ", r.progress());
 			$('#file-status-' + file.uniqueIdentifier + ' div').html(Math.floor(file.progress()*100) + '%');
 			$('#aspect_submission_StepTransformer_div_progress-bar').css({width:Math.floor(r.progress()*100) + '%'});
 			// DATASHARE start
