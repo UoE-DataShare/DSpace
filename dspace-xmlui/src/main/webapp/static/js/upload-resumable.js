@@ -166,6 +166,10 @@
 		});
 
 		r.on('fileProgress', function(file){
+			// DATASHARE start
+			// We disable the next button here.
+			$("button[name='submit_next']").prop("disabled", true);
+			// DATASHARE end
 			// Handle progress for both the file and the overall upload
 			console.log("r.progress(): ", r.progress());
 			$('#file-status-' + file.uniqueIdentifier + ' div').html(Math.floor(file.progress()*100) + '%');
@@ -175,11 +179,11 @@
 			// console.log("Math.floor(r.progress()*100): ", Math.floor(r.progress()*100));
 			// console.log("Math.floor(file.progress()*100): ", Math.floor(file.progress()*100));
 			
-			if(Math.floor(r.progress()*100) < 100 || Math.floor(file.progress()*100) < 100) {
-				$("button[name='submit_next']").prop("disabled", true);	
-			} else {
-				$("button[name='submit_next']").prop("disabled", false);
-			}	
+//			if(Math.floor(r.progress()*100) < 100 || Math.floor(file.progress()*100) < 100) {
+//				$("button[name='submit_next']").prop("disabled", true);	
+//			} else {
+//				$("button[name='submit_next']").prop("disabled", false);
+//			}	
 			// DATASHARE end
 		});
 
@@ -193,6 +197,7 @@
 
 		r.on('complete', function(){
 			var filesWithError = false;
+			
 
 			// check if there are any errors
 			for(var i = 0; i < r.files.length; i++){
@@ -201,14 +206,21 @@
 					break;
 				}
 			}
+			console.log("Upload has fileErrors: " + filesWithError);
 
 			if(filesWithError){
 				$('#progress-pause-link').hide();
 				$('#progress-resume-link').show();
 			}
 			else{
+				console.log("UPLOAD COMPLETED and BITSTREAMS CREATED.")
 				// Hide pause/resume when the upload has completed
 				$('#progress-resume-link, #progress-pause-link').hide();
+				
+				// DATASHARE start
+				// Only enable NEXT when we receive complete event without errors
+				$("button[name='submit_next']").prop("disabled", false);
+				// DATASHARE end
 			}
 
 			$('#aspect_submission_StepTransformer_div_progress-bar').css('width', '0%');
