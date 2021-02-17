@@ -171,7 +171,11 @@
 			$("button[name='submit_next']").prop("disabled", true);
 			// DATASHARE end
 			// Handle progress for both the file and the overall upload
-			console.log("r.progress(): ", r.progress());
+			if (r.progress() > 0.98) {
+				// View final file progress
+				console.log("r.progress(): ", r.progress());
+			}
+			
 			$('#file-status-' + file.uniqueIdentifier + ' div').html(Math.floor(file.progress()*100) + '%');
 			$('#aspect_submission_StepTransformer_div_progress-bar').css({width:Math.floor(r.progress()*100) + '%'});
 			// DATASHARE start
@@ -219,7 +223,15 @@
 				
 				// DATASHARE start
 				// Only enable NEXT when we receive complete event without errors
-				$("button[name='submit_next']").prop("disabled", false);
+				// Wait 20 secs
+				// Could not get setTimeout to work. So written code to wait.
+				var d = new Date();
+			    var d2 = null;
+			    do { d2 = new Date();} while(d2-d < 20000);
+				
+			    $("button[name='submit_next']").prop("disabled", false);
+			    
+				
 				// DATASHARE end
 			}
 
