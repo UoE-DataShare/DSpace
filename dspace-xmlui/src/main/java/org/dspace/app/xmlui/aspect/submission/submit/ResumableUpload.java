@@ -473,7 +473,7 @@ public class ResumableUpload extends AbstractAction
 	private Bitstream createBitstream(Context context, File file, Item item)
 	{
 		Bitstream b = null; 
-
+        
 		try
 		{
 			FileInputStream fis = new FileInputStream(file);
@@ -604,9 +604,16 @@ public class ResumableUpload extends AbstractAction
 			Item item = ips.getItem();
 
 			log.info("Create bitstream on item " + item.getID());
+			
+			log.debug("SESSION logging: BEFORE createBitstream():");
+			logSessionDetails(session);
 
 			// create new bitstream
 			Bitstream b = this.createBitstream(ctx, file, item);
+			
+			log.debug("SESSION logging: AFTER createBitstream():");
+			logSessionDetails(session);
+
 
 			// delete file and upload
 			log.info("deleting " + this.chunkDir);
@@ -736,7 +743,20 @@ public class ResumableUpload extends AbstractAction
 
 		return bstatus;
 	}
+	
+	
+	private void logSessionDetails(HttpSession session) {
+		log.debug("SESSION: " + session);
 
+		if(session != null) {
+			log.debug("SESSION: " + session);
+			Enumeration<String> attributes = session.getAttributeNames();
+			while (attributes.hasMoreElements()) {
+				String attribute = (String) attributes.nextElement();
+				log.debug("SESSION attribute: " + attribute +" : " + session.getAttribute(attribute));
+			}
+		}
+	}
 	/**
 	 * Reassemble file from individually uploaded chunks. The file will also be virus checked.
 	 */

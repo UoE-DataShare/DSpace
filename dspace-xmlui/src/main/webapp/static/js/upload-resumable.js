@@ -42,7 +42,7 @@
 	if(sId > 0){
 		r = new Resumable({
 			target: url,
-			chunkSize: 2*1024 * 1024,
+			chunkSize: 1*1024 * 1024,
 			simultaneousUploads: 1,
 			testChunks: true,
 			throttleProgressCallbacks: 1,
