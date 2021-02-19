@@ -386,11 +386,13 @@ public class ItemImportServiceImpl implements ItemImportService, InitializingBea
 
 			// DATASHARE - do virus check
 			deposits = new ArrayList<Item>(1000);
-			if(!new VirusChecker(d).isVirusFree()){
-				System.out.println(d + "has failed virus check");
-				System.exit(1);
-			}
-			System.out.println("Passed Virus Check stage.");
+			//  The virus check is now run manually on the VM as a part of the batch upload process
+			
+			//if(!new VirusChecker(d).isVirusFree()){
+			//	System.out.println(d + "has failed virus check");
+			//	System.exit(1);
+			//}
+			//System.out.println("Passed Virus Check stage.");
 			// DATASHARE end
 
 			String[] dircontents = d.list(directoryFilter);
