@@ -9,6 +9,8 @@ package org.dspace.eperson;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import org.dspace.authorize.AuthorizeServiceImpl;
 import org.dspace.content.DSpaceObject;
 import org.dspace.content.DSpaceObjectLegacySupport;
 import org.dspace.content.Item;
@@ -89,6 +91,11 @@ public class EPerson extends DSpaceObject implements DSpaceObjectLegacySupport
     @Transient
     protected transient EPersonService ePersonService;
 
+    // DATASHARE - start
+    @Transient
+    private static Logger log = Logger.getLogger(EPerson.class);
+    // DATASHARE - end
+
     /**
      * Protected constructor, create object using:
      * {@link org.dspace.eperson.service.EPersonService#create(Context)}
@@ -113,28 +120,34 @@ public class EPerson extends DSpaceObject implements DSpaceObjectLegacySupport
     @Override
     public boolean equals(Object obj)
     {
+        log.debug("In EPerson equals");
         if (obj == null)
         {
+            log.debug("Comparing against null eperson");
             return false;
         }
         Class<?> objClass = HibernateProxyHelper.getClassWithoutInitializingProxy(obj);
         if (getClass() != objClass)
         {
+            log.debug("Classes don't match: '" + getClass().toString() + "' '" + objClass.toString() + "'");
             return false;
         }
         final EPerson other = (EPerson) obj;
-        if (this.getID() != other.getID())
-        {
+        if (!this.getID().equals(other.getID())) {
+            log.debug("Ids don't match: '" + this.getID() + "' v '" +other.getID());
             return false;
         }
         if (!StringUtils.equals(this.getEmail(), other.getEmail()))
         {
+            log.debug("Emails don't match: '" + this.getEmail() + "' v '" +other.getEmail());
             return false;
         }
         if (!StringUtils.equals(this.getFullName(), other.getFullName()))
         {
+            log.debug("Names don't match: '" + this.getFullName() + "' v '" +other.getFullName());
             return false;
         }
+        log.debug("Everything matched :-)");
         return true;
     }
 
