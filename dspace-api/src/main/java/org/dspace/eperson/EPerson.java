@@ -133,10 +133,17 @@ public class EPerson extends DSpaceObject implements DSpaceObjectLegacySupport
             return false;
         }
         final EPerson other = (EPerson) obj;
+        // DATASHARE - start
+        // update code to DSpace 7 version to fix LUC025A-45
         if (!this.getID().equals(other.getID())) {
             log.debug("Ids don't match: '" + this.getID() + "' v '" +other.getID());
             return false;
         }
+        //if (this.getID() != other.getID()) {
+        //    log.debug("Ids don't match: '" + this.getID() + "' v '" +other.getID());
+        //    return false;
+        //}
+        // DATASHARE - end
         if (!StringUtils.equals(this.getEmail(), other.getEmail()))
         {
             log.debug("Emails don't match: '" + this.getEmail() + "' v '" +other.getEmail());
