@@ -381,24 +381,24 @@ public class ResumableUpload extends AbstractAction
 						Bundle bundle = bundles.get(0);
 						bundle.removeBitstream(bitstream);
 						bitstream.getBundles().remove(bundle);
- 
+
 						List<Bitstream> bitstreams = bundle.getBitstreams();
-						
+
 						log.debug("bitstreams.size(): " + bitstreams.size());
-						
+
 						// REMOVED THIS FROM DSPACE 5 CODE
 						// HOPEFULLY NOT FATAL, AS IT DID NOT WORK HERE
-						
+
 						// remove bundle if it's now empty
-//						if(bitstreams.size() < 1)
-//						{
-//							SubmissionInfo si = FlowUtils.obtainSubmissionInfo(
-//									objectModel, 'S' + request.getParameter("submissionId"));
-//							Item item = si.getSubmissionItem().getItem();
-//
-//							itemService.removeBundle(context, item, bundle);
-//							itemService.update(context, item);
-//						}
+						//						if(bitstreams.size() < 1)
+						//						{
+						//							SubmissionInfo si = FlowUtils.obtainSubmissionInfo(
+						//									objectModel, 'S' + request.getParameter("submissionId"));
+						//							Item item = si.getSubmissionItem().getItem();
+						//
+						//							itemService.removeBundle(context, item, bundle);
+						//							itemService.update(context, item);
+						//						}
 					}
 					success = true;
 				}
@@ -429,13 +429,13 @@ public class ResumableUpload extends AbstractAction
 		{
 			log.error(ex);
 		}
-//		catch(AuthorizeException ex)
-//		{
-//			log.error(ex);
-//		}
-//		catch(IOException ex){
-//			log.error(ex);
-//		}
+		//		catch(AuthorizeException ex)
+		//		{
+		//			log.error(ex);
+		//		}
+		//		catch(IOException ex){
+		//			log.error(ex);
+		//		}
 		catch(Exception ex){
 			log.error(ex);
 		}
@@ -480,7 +480,9 @@ public class ResumableUpload extends AbstractAction
 	 */
 	private Bitstream createBitstream(Context context, File file, Item item)
 	{
-		Bitstream b = null; 
+		Bitstream b = null;
+		Bitstream duplicateBitstream = null;
+		boolean duplicateBitstreamExists = false;
 		log.debug("In createBitstream");
 		try
 		{
@@ -501,27 +503,38 @@ public class ResumableUpload extends AbstractAction
 			{
 				// we have a bundle already, just add bitstream
 				log.debug("We do already have a bundle");
-				log.debug("About to create Bitstreeam");
-				b = bitstreamService.create(context, fis);
-				log.debug("About add Bitstreeam");
-				bundleService.addBitstream(context, bundles.get(0), b);
-				log.debug("About to update bundle");
-				bundleService.update(context, bundles.get(0));
 
+				duplicateBitstream = bitstreamService.getBitstreamByName(item, "ORIGINAL", file.getName());
+				duplicateBitstreamExists = duplicateBitstream != null;
+				log.debug("duplicateBitstreamExists: " + duplicateBitstreamExists);
+				if(!duplicateBitstreamExists) {
+
+					log.debug("About to create Bitstreeam");
+					b = bitstreamService.create(context, fis);
+					log.debug("About add Bitstreeam");
+					bundleService.addBitstream(context, bundles.get(0), b);
+					log.debug("About to update bundle");
+					bundleService.update(context, bundles.get(0));
+
+				}
 			}
 
-			b.setName(context, file.getName()); 
-			b.setSource(context, file.getAbsolutePath());
+			if(!duplicateBitstreamExists) {
+				b.setName(context, file.getName()); 
+				b.setSource(context, file.getAbsolutePath());
 
-			// identify the format
-			log.debug("About to set the format");
-			b.setFormat(context, bitstreamFormatService.guessFormat(context, b));
-			log.debug("Finished setting the format");
+				// identify the format
+				log.debug("About to set the format");
+				b.setFormat(context, bitstreamFormatService.guessFormat(context, b));
+				log.debug("Finished setting the format");
 
-			log.debug("Update bitstream");
-			bitstreamService.update(context, b);
-			log.debug("Update item");
-			itemService.update(context, item);
+				log.debug("Update bitstream");
+				bitstreamService.update(context, b);
+				log.debug("Update item");
+				itemService.update(context, item);
+			} else {
+				b = duplicateBitstream;
+			}
 		}
 		catch(FileNotFoundException ex)
 		{
