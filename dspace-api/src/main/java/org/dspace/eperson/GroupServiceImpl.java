@@ -171,25 +171,31 @@ public class GroupServiceImpl extends DSpaceObjectServiceImpl<Group> implements 
     public boolean isMember(Context context, EPerson ePerson, Group group)
             throws SQLException
     {
+        log.debug("In GroupServiceImpl isMember");
         if(group == null) {
+            log.debug("Group is null");
             return false;
 
             // special, everyone is member of group 0 (anonymous)
         } else if (StringUtils.equals(group.getName(), Group.ANONYMOUS) || isParentOf(context, group, findByName(context, Group.ANONYMOUS))) {
+            log.debug("Member of anonymous");
             return true;
 
         } else {
             Boolean cachedGroupMembership = context.getCachedGroupMembership(group, ePerson);
 
             if(cachedGroupMembership != null) {
+                log.debug("Returning cached value :'" + cachedGroupMembership.booleanValue() + "'");
                 return cachedGroupMembership.booleanValue();
 
             } else {
+                log.debug("No cached value");
                 boolean isMember = false;
 
                 //If we have an ePerson, check we can find membership in the database
                 if(ePerson != null) {
                     //lookup eperson in normal groups and subgroups with 1 query
+                    log.debug("Looking for eperson in group");
                     isMember = isEPersonInGroup(context, group, ePerson);
                 }
 
@@ -199,6 +205,7 @@ public class GroupServiceImpl extends DSpaceObjectServiceImpl<Group> implements 
                 //Note that special groups should only be checked if the current user == the ePerson.
                 //This also works for anonymous users (ePerson == null) if IP authentication used
                 if(!isMember && CollectionUtils.isNotEmpty(context.getSpecialGroups()) && isAuthenticatedUser(context, ePerson)) {
+                    log.debug("Looking for eperson in special groups");
                     Iterator<Group> it = context.getSpecialGroups().iterator();
 
                     while (it.hasNext() && !isMember) {

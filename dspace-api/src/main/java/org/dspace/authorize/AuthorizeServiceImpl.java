@@ -113,14 +113,15 @@ public class AuthorizeServiceImpl implements AuthorizeService
 				log.debug(group.getName());
 			}
 			log.debug("Context: " + c);
-			log.debug("DSpaceObject: " + o);
+			log.debug("DSpaceObject: " + o.getID());
 			log.debug("useInheritance: " + useInheritance);
 			log.debug("action: " + action);
 			if (o != null) {
 				log.debug("ResourcePolicies:");
 				for(ResourcePolicy rp : o.getResourcePolicies()) {
+					log.debug("rpDspaceObjec: " + rp.getdSpaceObject().getID());
 					log.debug("rpType: " + rp.getRpType());
-					log.debug("EPerson: " + rp.getEPerson());
+					//log.debug("EPerson: " + rp.getEPerson().getID());
 					if (rp.getEPerson() != null) {
 						log.debug("EPerson ID: " + rp.getEPerson().getID());
 					}
@@ -270,6 +271,7 @@ public class AuthorizeServiceImpl implements AuthorizeService
 	 */
 	protected boolean authorize(Context c, DSpaceObject o, int action, EPerson e, boolean useInheritance) throws SQLException
 	{
+		log.debug("In AuthorizeServiceImple authorize");
 		// return FALSE if there is no DSpaceObject
 		if (o == null)
 		{
@@ -284,7 +286,7 @@ public class AuthorizeServiceImpl implements AuthorizeService
 
 		// If authorization was given before and cached
 		Boolean cachedResult = c.getCachedAuthorizationResult(o, action, e);
-		
+		log.debug("CachedResult is :'" + cachedResult + "'");
 		if (cachedResult != null) {
 			return cachedResult.booleanValue();
 		}
@@ -293,6 +295,7 @@ public class AuthorizeServiceImpl implements AuthorizeService
 		EPerson userToCheck = null;
 		if (e != null)
 		{
+			log.debug("UserToCheck is not null:'" + e.getEmail() + "'");
 			userToCheck = e;
 
 			// perform isAdmin check to see
@@ -302,6 +305,7 @@ public class AuthorizeServiceImpl implements AuthorizeService
 			if (isAdmin(c, e, adminObject))
 			{
 				c.cacheAuthorizedAction(o, action, e, true, null);
+				log.debug("In AuthorizeServiceImple authorize found admin");
 				return true;
 			}
 		}
@@ -314,6 +318,7 @@ public class AuthorizeServiceImpl implements AuthorizeService
 		boolean ignoreCustomPolicies = false;
 		if (o instanceof Bitstream)
 		{
+			log.debug("DSpace object is a bitstream");
 			Bitstream b = (Bitstream) o;
 
 			// Ensure that this is not a collection or community logo
@@ -325,17 +330,19 @@ public class AuthorizeServiceImpl implements AuthorizeService
 		}
 		if (o instanceof Bundle)
 		{
+			log.debug("DSpace object is a bundle");
 			ignoreCustomPolicies = !isAnyItemInstalled(c, Arrays.asList(((Bundle) o)));
 		}
 		if (o instanceof Item)
 		{
+			log.debug("DSpace object is an item");
 			if (workspaceItemService.findByItem(c, (Item) o) != null ||
 					workflowItemService.findByItem(c, (Item) o) != null)
 			{
 				ignoreCustomPolicies = true;
 			}
 		}
-
+		log.debug("IgnoreCustomPolicies: '" + ignoreCustomPolicies + "'");
 
 		for (ResourcePolicy rp : getPoliciesActionFilter(c, o, action))
 		{
@@ -348,26 +355,37 @@ public class AuthorizeServiceImpl implements AuthorizeService
 					//So we remove this resource policy from the cache.
 					c.uncacheEntity(rp);
 				}
+				log.debug("In AuthorizeServiceImple authorize ignoring custom policy");
 				continue;
 			}
 
 			// check policies for date validity
 			if (resourcePolicyService.isDateValid(rp))
 			{
+				log.debug("Rp date is valid for :'" + rp.getdSpaceObject().getID() +"'");
+				log.debug("Comparing rp eperson:'" + rp.getEPerson() + "'"+ " to '" + userToCheck + "'");
+				if (rp.getEPerson() != null && userToCheck != null) {
+					log.debug("Comparing eperson uuid':" + rp.getEPerson().getID() + "' to '" + userToCheck.getID() + "'");
+				}
+				//if (rp.getEPerson() != null && userToCheck != null && rp.getEPerson().getID().equals(userToCheck.getID())){
 				if (rp.getEPerson() != null && rp.getEPerson().equals(userToCheck))
 				{
 					c.cacheAuthorizedAction(o, action, e, true, rp);
+					log.debug("In AuthorizeServiceImple authorize found person");
 					return true; // match
 				}
 
+				log.debug("Comparing rp group");
 				if ((rp.getGroup() != null)
 						&& (groupService.isMember(c, e, rp.getGroup())))
 				{
 					// group was set, and eperson is a member
 					// of that group
 					c.cacheAuthorizedAction(o, action, e, true, rp);
+					log.debug("In AuthorizeServiceImpl authorize found group");
 					return true;
 				}
+				log.debug("Compared rp group");
 			}
 
 			if(c.isReadOnly()) {
@@ -379,6 +397,7 @@ public class AuthorizeServiceImpl implements AuthorizeService
 
 		// default authorization is denial
 		c.cacheAuthorizedAction(o, action, e, false, null);
+		log.debug("In AuthorizeServiceImpl authorize without finding anything");
 		return false;
 	}
 

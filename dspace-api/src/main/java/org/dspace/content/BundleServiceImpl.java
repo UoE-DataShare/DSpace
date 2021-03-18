@@ -87,20 +87,28 @@ public class BundleServiceImpl extends DSpaceObjectServiceImpl<Bundle> implement
 
     @Override
     public Bundle create(Context context, Item item, String name) throws SQLException, AuthorizeException {
+        log.debug("In BundleServiceImpl create");
         if (StringUtils.isBlank(name))
         {
             throw new SQLException("Bundle must be created with non-null name");
         }
+        log.debug("About to authorizeAction");
         authorizeService.authorizeAction(context, item, Constants.ADD);
-
+        log.debug("Finished authorizeAction");
 
         // Create a table row
+        log.debug("About to add to db (I think)");
         Bundle bundle = bundleDAO.create(context, new Bundle());
+        log.debug("Added to db");
         bundle.setName(context, name);
+        log.debug("About to add to item in db");
         itemService.addBundle(context, item, bundle);
+        log.debug("Added to item");
         if(!bundle.getItems().contains(item))
         {
+            log.debug("Adding item to bundle");
             bundle.addItem(item);
+            log.debug("Added item to bundle");
         }
 
 
@@ -112,6 +120,7 @@ public class BundleServiceImpl extends DSpaceObjectServiceImpl<Bundle> implement
         // identifiers to it.
         context.addEvent(new Event(Event.CREATE, Constants.BUNDLE, bundle.getID(), null));
 
+        log.debug("Leaving BundleServiceImpl create");
         return bundle;
     }
 

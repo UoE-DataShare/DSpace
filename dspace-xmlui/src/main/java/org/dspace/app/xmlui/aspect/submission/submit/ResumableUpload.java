@@ -151,10 +151,12 @@ public class ResumableUpload extends AbstractAction
 
 		if(request.getMethod().equals("GET"))
 		{
+			log.debug("Processing GET");
 			returnValues = new HashMap<String, String>();
 			String complete = request.getParameter("complete");
 			if(complete != null && Boolean.valueOf(complete))
 			{
+				log.debug("Processing GET complete");
 				String bId = this.getCompletedBitstreamId(objectModel);    
 				if(bId != null)
 				{
@@ -164,13 +166,18 @@ public class ResumableUpload extends AbstractAction
 				}
 			}
 			else{
+				log.debug("Starting doGetResumable");
 				doGetResumable(objectModel);
+				log.debug("Finishing doGetResumable");
 			}
 		}
 		else if(request.getMethod().equals("POST"))
 		{
+			log.debug("Processing POST");
 			returnValues = new HashMap<String, String>();
+			log.debug("Starting doPostResumable");
 			doPostResumable(objectModel);
+			log.debug("Finishing doPostResumable");
 		}
 		else if(request.getMethod().equals("DELETE"))
 		{
@@ -229,7 +236,9 @@ public class ResumableUpload extends AbstractAction
 				{
 					// its possible for the final request to be a GET request,
 					// in this case process file
+					log.debug("Got the final chunk start uploadComplete (Get version)");
 					this.uploadComplete(objectModel, resumableTotalChunks);
+					log.debug("Got the final chunk start uploadComplete (Get version)");
 				}
 
 			}
@@ -295,7 +304,9 @@ public class ResumableUpload extends AbstractAction
 				if(resumableChunkNumber == resumableTotalChunks)
 				{
 					// we have the final chunk process upload
+					log.debug("Got the final chunk start uploadComplete (Post version)");
 					this.uploadComplete(objectModel, resumableTotalChunks);
+					log.debug("Got the final chunk end uploadComplete (Post version)");
 				}
 			}
 			else
@@ -370,24 +381,24 @@ public class ResumableUpload extends AbstractAction
 						Bundle bundle = bundles.get(0);
 						bundle.removeBitstream(bitstream);
 						bitstream.getBundles().remove(bundle);
- 
+
 						List<Bitstream> bitstreams = bundle.getBitstreams();
-						
+
 						log.debug("bitstreams.size(): " + bitstreams.size());
-						
+
 						// REMOVED THIS FROM DSPACE 5 CODE
 						// HOPEFULLY NOT FATAL, AS IT DID NOT WORK HERE
-						
+
 						// remove bundle if it's now empty
-//						if(bitstreams.size() < 1)
-//						{
-//							SubmissionInfo si = FlowUtils.obtainSubmissionInfo(
-//									objectModel, 'S' + request.getParameter("submissionId"));
-//							Item item = si.getSubmissionItem().getItem();
-//
-//							itemService.removeBundle(context, item, bundle);
-//							itemService.update(context, item);
-//						}
+						//						if(bitstreams.size() < 1)
+						//						{
+						//							SubmissionInfo si = FlowUtils.obtainSubmissionInfo(
+						//									objectModel, 'S' + request.getParameter("submissionId"));
+						//							Item item = si.getSubmissionItem().getItem();
+						//
+						//							itemService.removeBundle(context, item, bundle);
+						//							itemService.update(context, item);
+						//						}
 					}
 					success = true;
 				}
@@ -418,13 +429,13 @@ public class ResumableUpload extends AbstractAction
 		{
 			log.error(ex);
 		}
-//		catch(AuthorizeException ex)
-//		{
-//			log.error(ex);
-//		}
-//		catch(IOException ex){
-//			log.error(ex);
-//		}
+		//		catch(AuthorizeException ex)
+		//		{
+		//			log.error(ex);
+		//		}
+		//		catch(IOException ex){
+		//			log.error(ex);
+		//		}
 		catch(Exception ex){
 			log.error(ex);
 		}
@@ -469,8 +480,10 @@ public class ResumableUpload extends AbstractAction
 	 */
 	private Bitstream createBitstream(Context context, File file, Item item)
 	{
-		Bitstream b = null; 
-
+		Bitstream b = null;
+		Bitstream duplicateBitstream = null;
+		boolean duplicateBitstreamExists = false;
+		log.debug("In createBitstream");
 		try
 		{
 			FileInputStream fis = new FileInputStream(file);
@@ -480,26 +493,48 @@ public class ResumableUpload extends AbstractAction
 
 			if (bundles.size() < 1)
 			{
+				log.debug("We don't already have a bundle");
 				// set bundle's name to ORIGINAL
+				log.debug("About to createSingleBitstreeam");
 				b = itemService.createSingleBitstream(context, fis, item, "ORIGINAL");
+				log.debug("Leaving createSingleBitstreeam");
 			}
 			else
 			{
 				// we have a bundle already, just add bitstream
-				b = bitstreamService.create(context, fis); 
-				bundleService.addBitstream(context, bundles.get(0), b);
-				bundleService.update(context, bundles.get(0));
+				log.debug("We do already have a bundle");
 
+				duplicateBitstream = bitstreamService.getBitstreamByName(item, "ORIGINAL", file.getName());
+				duplicateBitstreamExists = duplicateBitstream != null;
+				log.debug("duplicateBitstreamExists: " + duplicateBitstreamExists);
+				if(!duplicateBitstreamExists) {
+
+					log.debug("About to create Bitstreeam");
+					b = bitstreamService.create(context, fis);
+					log.debug("About add Bitstreeam");
+					bundleService.addBitstream(context, bundles.get(0), b);
+					log.debug("About to update bundle");
+					bundleService.update(context, bundles.get(0));
+
+				}
 			}
 
-			b.setName(context, file.getName()); 
-			b.setSource(context, file.getAbsolutePath());
+			if(!duplicateBitstreamExists) {
+				b.setName(context, file.getName()); 
+				b.setSource(context, file.getAbsolutePath());
 
-			// identify the format
-			b.setFormat(context, bitstreamFormatService.guessFormat(context, b));
+				// identify the format
+				log.debug("About to set the format");
+				b.setFormat(context, bitstreamFormatService.guessFormat(context, b));
+				log.debug("Finished setting the format");
 
-			bitstreamService.update(context, b);
-			itemService.update(context, item);
+				log.debug("Update bitstream");
+				bitstreamService.update(context, b);
+				log.debug("Update item");
+				itemService.update(context, item);
+			} else {
+				b = duplicateBitstream;
+			}
 		}
 		catch(FileNotFoundException ex)
 		{
@@ -517,6 +552,7 @@ public class ResumableUpload extends AbstractAction
 			log.error(ex);
 		}
 
+		log.debug("Leaving createBitstream");
 		return b;
 	}
 
@@ -562,6 +598,7 @@ public class ResumableUpload extends AbstractAction
 			File file,
 			String resumableIdentifier)
 	{
+		log.debug("In process file");
 		int status = Curator.CURATE_SUCCESS;
 		String scan = ConfigurationManager.getProperty("submission-curation", "virus-scan");
 
@@ -622,6 +659,7 @@ public class ResumableUpload extends AbstractAction
 			log.error("Problem with bitstream creation: " + ex.getMessage());
 			throw new RuntimeException(ex);
 		}
+		log.debug("Leaving process file");
 
 	}
 
@@ -638,16 +676,21 @@ public class ResumableUpload extends AbstractAction
 
 		// check chunk count is correct
 		int noOfChunks = new File(this.chunkDir).listFiles().length;
+		log.debug("NoOfChunks :'" + noOfChunks + "'");
+		log.debug("Expected noOfChunks :'" +resumableTotalChunks + "'");
 		if(noOfChunks >= resumableTotalChunks)
 		{
 			String resumableFilename = request.getParameter("resumableFilename");
+			log.debug("ResumableFilename :'" + resumableFilename + "'");
 			String resumableIdentifier = request.getParameter("resumableIdentifier");
+			log.debug("ResumableIdentifier :'" + resumableIdentifier + "'");
 
 			log.info("Upload of " + resumableIdentifier + " complete. Start file reassembly");
 
 			try
 			{
-				// recreate file in a new thread 
+				// recreate file in a new thread
+				log.debug("Start to reassemble in new thread");
 				new FileReassembler(
 						ContextUtil.obtainContext(objectModel),
 						Integer.parseInt(request.getParameter("submissionId")),
@@ -760,12 +803,15 @@ public class ResumableUpload extends AbstractAction
 				String resumableIdentifier,
 				int resumableTotalChunks)
 		{
+			log.debug("In FileReassembler constructor");
 			this.submissionId = submissionId;
 			this.resumableFilename = resumableFilename;
 			this.resumableIdentifier = resumableIdentifier;
 			this.resumableTotalChunks = resumableTotalChunks;
 			this.session = session;
 			this.user = context.getCurrentUser();
+			log.debug("User is '" + this.user.getEmail() + "'");
+			log.debug("Leaving FileReassembler constructor");
 		}
 
 		/**
@@ -775,6 +821,7 @@ public class ResumableUpload extends AbstractAction
 		 */
 		private File makeFileFromChunks() throws IOException
 		{
+			log.debug("In FileReassembler makeFileFromChunks");
 			String chunkPath = ResumableUpload.this.chunkDir + File.separator + "part";
 			File destFile = null;
 
@@ -838,12 +885,14 @@ public class ResumableUpload extends AbstractAction
 				catch (IOException ex){}
 			}
 
+			log.debug("Leaving FileReassembler makeFileFromChunks");
 			return destFile;
 		}        
 
 		public void run() {
 			try
 			{
+				log.debug("In FileReassembler run");
 				// recreate file from chunks and process file
 				ResumableUpload.this.processFile(
 						this.user,
@@ -851,6 +900,7 @@ public class ResumableUpload extends AbstractAction
 						this.session,
 						this.makeFileFromChunks(),
 						this.resumableIdentifier);
+				log.debug("Leaving FileReassembler run");
 			}
 			catch(IOException ex)
 			{
