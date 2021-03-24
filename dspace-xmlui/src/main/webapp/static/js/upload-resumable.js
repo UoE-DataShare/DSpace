@@ -125,7 +125,29 @@
 		r.on('fileAdded', function(file){
 			currentFile = file;
 			hideError();
-
+			console.log("currentFile.fileName: ", currentFile.fileName);
+			console.log("r.files.length: ", r.files.length);
+			// Get an array of Bitstreams created.
+			var bitstreamArray = $('a[href^="/bitstream/item/"], a[href^="/xmlui/bitstream/item/"]')  
+			.map(function() {
+			    return $(this).text();
+			  })
+			  .get()
+			  .join();
+			console.log("bitstreamArray: ", bitstreamArray);
+			
+			// If file already as a created bitstream,
+			// we remove file from upload.
+			// The file name must be at least twice in bitstreamArray
+			if(bitstreamArray.includes(currentFile.fileName) 
+			    && bitstreamArray.indexOf(currentFile.fileName) !== bitstreamArray.lastIndexOf(currentFile.fileName)) {
+                // Cancel upload of a specific ResumableFile object on the list that appears twice.
+				
+				
+				r.removeFile(currentFile);
+				return;
+			}
+		
 			// check enough space left in item for upload
 			if(r.getSize() > itemSpace){
 				console.debug("Total upload size is " + r.getSize());
