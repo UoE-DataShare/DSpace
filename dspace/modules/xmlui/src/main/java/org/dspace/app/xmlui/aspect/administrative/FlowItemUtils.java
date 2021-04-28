@@ -597,9 +597,17 @@ public class FlowItemUtils
 			itemService.update(context, item);
 
 			// DATASHARE - start
+			// delete dataset this will be regenerated later
+			try {
+				// delete dataset this will be regenerated later
+				new ItemDataset(context, item).delete();
+			} catch(Exception e) {
+				// Do nothing
+			}
+			
 			// check dataset status
 			new ItemDataset(context, bitstream).checkDataset();
-			// DATASHARE - end
+	        // DATASHARE - end
 			
             processAccessFields(context, request, item.getOwningCollection(), bitstream);
 			
@@ -788,10 +796,15 @@ public class FlowItemUtils
 		
 		itemService.update(context, item);
 		
-		 // DATASHARE - start
-        // delete dataset this will be regenerated later
-        new ItemDataset(context, item).delete();
-        // DATASHARE - end
+		// DATASHARE - start
+		// delete dataset this will be regenerated later
+		try {
+			// delete dataset this will be regenerated later
+			new ItemDataset(context, item).delete();
+		} catch(Exception e) {
+			// Do nothing
+		}
+		// DATASHARE - end
 
 		result.setContinue(true);
 		result.setOutcome(true);

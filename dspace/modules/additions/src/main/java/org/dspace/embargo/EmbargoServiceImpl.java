@@ -9,9 +9,13 @@ package org.dspace.embargo;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import javax.mail.MessagingException;
 
@@ -176,55 +180,93 @@ public class EmbargoServiceImpl implements EmbargoService
 	 * @param context
 	 */
 	public void checkForExpiry(Context context){
-		try{
-			Date now = new Date();
-			Iterator<Item> ii = findItemsByLiftMetadata(context);
-			while (ii.hasNext()){
-				Item item = ii.next();
-				DCDate liftDate = getEmbargoTermsAsDate(context, item);
+		try{ 
+			// Using LocalDate (introduced in Java 8, 
+			// represents a local date without timezone and time of that day)
+			LocalDate now = LocalDate.now();
+			DayOfWeek dayNow = now.getDayOfWeek();
 
-				if (liftDate != null){
+			// Ignore today if is Saturday && Sunday
+			if(dayNow != DayOfWeek.SATURDAY && dayNow != DayOfWeek.SUNDAY) {
+				Iterator<Item> ii = findItemsByLiftMetadata(context);
 
-					long diff = Math.abs(liftDate.toDate().getTime() - now.getTime());
-					long diffDays = diff / (24 * 60 * 60 * 1000);
+				while (ii.hasNext()){
+					Item item = ii.next();
+					DCDate liftDCDate = getEmbargoTermsAsDate(context, item);
 
-					if(diffDays == 7){
-						String submitter = item.getSubmitter().getEmail();
-						String admin = ConfigurationManager.getProperty("mail.admin");
+					System.out.println("-----------------------------------------------");
+					System.out.println("Title: " + MetaDataUtil.getTitle(item));
+					System.out.println("Handle: " + ConfigurationManager.getProperty("handle.canonical.prefix") + item.getHandle());
+					System.out.println("liftDCDate: " + liftDCDate.displayDate(false, true, context.getCurrentLocale()));
+					System.out.println("liftDCDate.getYear(): " + liftDCDate.getYear());
+					System.out.println("liftDCDate.getMonth(): " + liftDCDate.getMonth());
+					System.out.println("liftDCDate.getDay(): " + liftDCDate.getDay());
 
-						if(!ConfigurationManager.getBooleanProperty("mail.server.disabled")){
-							Email mail = Email.getEmail(
-									I18nUtil.getEmailFilename(context.getCurrentLocale(), "embargo_expire"));
-							mail.addArgument(MetaDataUtil.getTitle(item));
-							mail.addArgument(ConfigurationManager.getProperty("handle.canonical.prefix") + item.getHandle());
-							mail.addArgument(liftDate.displayDate(false, true, context.getCurrentLocale()));
+					// Ensure all Year, Month and Day set.
+					if (liftDCDate != null && liftDCDate.getYear() > 0 && liftDCDate.getMonth() > 0 && liftDCDate.getDay() > 0) {
+						LocalDate embargoDate = LocalDate.of(liftDCDate.getYear(), liftDCDate.getMonth(), liftDCDate.getDay());
 
-							mail.addRecipient(submitter);
+						System.out.println("embargoDate.isAfter(now): " + embargoDate.isAfter(now));
 
-							if(!submitter.equals(admin)){
-								mail.addRecipient(admin);
+						// We want embargoDate in future (to now) and then send email
+						if(embargoDate.isAfter(now)) {
+							long diffInDays = ChronoUnit.DAYS.between(now, embargoDate);
+
+							System.out.println("diffInDays: " + diffInDays);
+
+							// Send Embargo Expiry Email if:
+							// it is 7 days from now, or,
+							// it is Friday and 8 or 9 days from now.
+							if(diffInDays == 7){
+								extracted(context, item, liftDCDate);
+							} else if (dayNow == DayOfWeek.FRIDAY && 
+									(diffInDays == 8 || diffInDays == 9)) {
+								extracted(context, item, liftDCDate);
 							}
-
-							try{
-								log.info("Sending email for embargo expiry message. Sent to " +
-										submitter + ", " + admin + " for " + item.getHandle());
-								mail.send();
-							}
-							catch(MessagingException ex){
-								log.error("Problem sending embargo expiry message: " + ex);
-							}
-						}
-						else{
-							log.info("Mail sending is disabled. Embargo expiry message would have been sent to " +
-									submitter + ", " + admin + " for " + item.getHandle());
-						}
+						} 
 					}
 				}
 			}
-		}
-		catch(AuthorizeException ex){throw new RuntimeException(ex);}
+
+		} catch(AuthorizeException ex){throw new RuntimeException(ex);}
 		catch(SQLException ex){throw new RuntimeException(ex);}
 		catch(IOException ex){throw new RuntimeException(ex);}
+
+	}
+
+	private void extracted(Context context, Item item, DCDate liftDCDate) throws IOException {
+		System.out.println("Sending Embargo Expiry Email");
+		String submitter = item.getSubmitter().getEmail();
+		System.out.println("To: " + submitter );
+
+		String admin = ConfigurationManager.getProperty("mail.admin");
+
+		if(!ConfigurationManager.getBooleanProperty("mail.server.disabled")){
+			Email mail = Email.getEmail(
+					I18nUtil.getEmailFilename(context.getCurrentLocale(), "embargo_expire"));
+			mail.addArgument(MetaDataUtil.getTitle(item));
+			mail.addArgument(ConfigurationManager.getProperty("handle.canonical.prefix") + item.getHandle());
+			mail.addArgument(liftDCDate.displayDate(false, true, context.getCurrentLocale()));
+
+			mail.addRecipient(submitter);
+
+			if(!submitter.equals(admin)){
+				mail.addRecipient(admin);
+			}
+
+			try{
+				log.info("Sending email for embargo expiry message. Sent to " +
+						submitter + ", " + admin + " for " + item.getHandle());
+				mail.send();
+			}
+			catch(MessagingException ex){
+				log.error("Problem sending embargo expiry message: " + ex);
+			}
+		}
+		else{
+			log.info("Mail sending is disabled. Embargo expiry message would have been sent to " +
+					submitter + ", " + admin + " for " + item.getHandle());
+		}
 	}    
 	// DATASHARE - end
 
