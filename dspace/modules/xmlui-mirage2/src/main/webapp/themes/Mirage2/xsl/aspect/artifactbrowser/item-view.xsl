@@ -130,6 +130,8 @@
                     <xsl:call-template name="itemSummaryView-DIM-publisher"/>
                     <xsl:call-template name="itemSummaryView-DIM-isversionof"/>
                     <xsl:call-template name="itemSummaryView-DIM-isreferencedby"/>
+                    <xsl:call-template name="itemSummaryView-DIM-replaces"/>
+                    <xsl:call-template name="itemSummaryView-DIM-isreplacedby"/>
 
                     <xsl:if test="$ds_item_view_toggle_url != ''">
                         <xsl:call-template name="itemSummaryView-show-full"/>
@@ -592,6 +594,42 @@
         <xsl:comment><!-- DATASHARE - end --></xsl:comment>
           <div class="simple-item-view-isreferencedby word-break item-page-field-wrapper table">
             <h5>Relation (Is Referenced By)</h5>
+            <a>
+              <xsl:attribute name="href">
+                <xsl:value-of select="$irb"/>
+              </xsl:attribute>
+              <xsl:value-of select="$irb"/>
+            </a>
+          </div>
+        </xsl:if>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-replaces">
+      <xsl:if test="dim:field[@element='relation' and @qualifier='replaces' and descendant::text()]">
+        <xsl:variable name="irb" select="dim:field[@element='relation' and @qualifier='replaces']"></xsl:variable>
+        <xsl:comment><!-- DATASHARE - start --></xsl:comment>
+        <xsl:if test="starts-with($irb, 'http://') or starts-with($irb, 'https://')">
+        <xsl:comment><!-- DATASHARE - end --></xsl:comment>
+          <div class="simple-item-view-replaces word-break item-page-field-wrapper table">
+            <h5>Replaces</h5>
+            <a>
+              <xsl:attribute name="href">
+                <xsl:value-of select="$irb"/>
+              </xsl:attribute>
+              <xsl:value-of select="$irb"/>
+            </a>
+          </div>
+        </xsl:if>
+      </xsl:if>
+    </xsl:template>
+    <xsl:template name="itemSummaryView-DIM-isreplacedby">
+      <xsl:if test="dim:field[@element='relation' and @qualifier='isreplacedby' and descendant::text()]">
+        <xsl:variable name="irb" select="dim:field[@element='relation' and @qualifier='isreplacedby']"></xsl:variable>
+        <xsl:comment><!-- DATASHARE - start --></xsl:comment>
+        <xsl:if test="starts-with($irb, 'http://') or starts-with($irb, 'https://')">
+        <xsl:comment><!-- DATASHARE - end --></xsl:comment>
+          <div class="simple-item-view-isreplacedby word-break item-page-field-wrapper table">
+            <h5>Superseded By</h5>
             <a>
               <xsl:attribute name="href">
                 <xsl:value-of select="$irb"/>
