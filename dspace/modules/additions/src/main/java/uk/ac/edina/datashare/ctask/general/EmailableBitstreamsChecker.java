@@ -68,7 +68,7 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 
 		// Unless this is an item, we'll skip this item
 		status = Curator.CURATE_SKIP;
-		logDebugMessage("The target dso is " + dso.getName());
+		log.info("The target dso is " + dso.getName());
 		if (dso instanceof Item) {
 			boolean itemNotEmailableMetadataSet = false;
 			try {
@@ -76,6 +76,7 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 
 				ItemService itemService = ContentServiceFactory.getInstance().getItemService();
 				Context context = new Context();
+				context.turnOffAuthorisationSystem();
 
 				itemService.clearMetadata(context, item, DS_METADATA_SCHEMA, NOT_EMAILABLE_METADATA_ELEMENT,
 						ITEM_METADATA_QUALIFIER, METADATA_LANGUAGE);
@@ -87,7 +88,7 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 					if ("ORIGINAL".equals(bundle.getName())) {
 						for (Bitstream bitstream : bundle.getBitstreams()) {
 							totalBitstreamSize += bitstream.getSizeBytes();
-							logDebugMessage("The bitstream size (bytes): " + bitstream.getSizeBytes());
+							log.info("The bitstream size (bytes): " + bitstream.getSizeBytes());
 							if (bitstream.getSizeBytes() > maxAllowedBitstreamsSizeInBytes) {
 								addItemMetaData(item, itemNotEmailableMetadataSet);
 								itemNotEmailableMetadataSet = true;
@@ -99,7 +100,7 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 					} else if ("THUMBNAIL".equals(bundle.getName())) {
 						for (Bitstream bitstream : bundle.getBitstreams()) {
 							totalBitstreamSize += bitstream.getSizeBytes();
-							logDebugMessage("The bitstream size (bytes): " + bitstream.getSizeBytes());
+							log.info("The bitstream size (bytes): " + bitstream.getSizeBytes());
 							if (bitstream.getSizeBytes() > maxAllowedBitstreamsSizeInBytes) {
 								addItemMetaData(item, itemNotEmailableMetadataSet);
 								itemNotEmailableMetadataSet = true;
@@ -110,7 +111,7 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 					}
 				}
 
-				logDebugMessage("The total item's bitstreams size (bytes): " + totalBitstreamSize);
+				log.info("The total item's bitstreams size (bytes): " + totalBitstreamSize);
 				// If the total size of the bitstreams exceeds the max-size then update the item
 				// metadata.
 				if (totalBitstreamSize > maxAllowedBitstreamsSizeInBytes) {
@@ -119,20 +120,23 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 				}
 				itemService.update(context, item);
 				status = Curator.CURATE_SUCCESS;
+				results.append("CURATE_SUCCESS");
 
 			} catch (AuthorizeException ae) {
 				// Something went wrong
-				logDebugMessage(ae.getMessage());
+				log.info(ae.getMessage());
 				status = Curator.CURATE_ERROR;
+				results.append("CURATE_ERROR");
 			} catch (SQLException sqle) {
 				// Something went wrong
-				logDebugMessage(sqle.getMessage());
+				log.info(sqle.getMessage());
 				status = Curator.CURATE_ERROR;
+				results.append("CURATE_ERROR");
 			}
 
 		}
 
-		logDebugMessage("About to report: " + results.toString());
+		log.info("About to report: " + results.toString());
 		setResult(results.toString());
 		report(results.toString());
 
@@ -142,10 +146,11 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 	// Add metadata to item object for a non-emailable item's bitstreams because of
 	// total size.
 	private void addItemMetaData(Item item, boolean alreadySet) throws SQLException {
-		// Only update if already set.
-		if (alreadySet) {
+		// Only update if not already set
+		if (!alreadySet) {
 			ItemService itemService = ContentServiceFactory.getInstance().getItemService();
 			Context context = new Context();
+			context.turnOffAuthorisationSystem();
 			itemService.addMetadata(context, item, DS_METADATA_SCHEMA, NOT_EMAILABLE_METADATA_ELEMENT,
 					ITEM_METADATA_QUALIFIER, METADATA_LANGUAGE, TRUE);
 		}
@@ -155,23 +160,13 @@ public class EmailableBitstreamsChecker extends AbstractCurationTask {
 	private void addBitstreamMetaData(Bitstream bitstream) throws SQLException {
 		BitstreamService bitstreamService = ContentServiceFactory.getInstance().getBitstreamService();
 		Context context = new Context();
+		context.turnOffAuthorisationSystem();
 		// Clear metadata field we plan to update
 		bitstreamService.clearMetadata(context, bitstream, DS_METADATA_SCHEMA, NOT_EMAILABLE_METADATA_ELEMENT,
 				BITSTREAM_METADATA_QUALIFIER, METADATA_LANGUAGE);
 		// Add metadata
 		bitstreamService.addMetadata(context, bitstream, DS_METADATA_SCHEMA, NOT_EMAILABLE_METADATA_ELEMENT,
 				BITSTREAM_METADATA_QUALIFIER, METADATA_LANGUAGE, TRUE);
-	}
-
-	/**
-	 * Debugging logging if required
-	 *
-	 * @param message The message to log
-	 */
-	private void logDebugMessage(String message) {
-		if (log.isDebugEnabled()) {
-			log.debug(message);
-		}
 	}
 
 }
