@@ -8,6 +8,8 @@
 package org.dspace.rest;
 
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
@@ -44,18 +46,51 @@ public class RestIndex {
     @Produces(MediaType.TEXT_HTML)
     public String sayHtmlHello(@Context ServletContext servletContext) {
     	// TODO Better graphics, add arguments to all methods. (limit, offset, item and so on)
-        return "<html><title>DSpace REST - index</title>" +
+    	// DATASHARE - start
+    	String baseUrl = "";
+    	
+		try {
+			String host = InetAddress.getLocalHost().getHostName();
+			if(host.equals("lac-datashare-live")) {
+				baseUrl = "https://datashare.ed.ac.uk";
+			} else if(host.equals("lac-datashare-test")) {
+				baseUrl = "https://test.datashare.ed.ac.uk";
+			}
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String restUrl = baseUrl + servletContext.getContextPath();
+		String queryClientUrl = restUrl + "/static/reports/query.html";
+		String reportsClientUrl = restUrl + "/static/reports/index.html";
+		
+		String restUrlAnchorHtmlTag = "<a href=\"" + restUrl +"\">" + restUrl + "</a>";
+		String queryClientAnchorHtmlTag = "<a href=\"" + queryClientUrl +"\">" + queryClientUrl + "</a>";
+		String reportsClientAnchorHtmlTag = "<a href=\"" + reportsClientUrl +"\">" + reportsClientUrl + "</a>";
+		
+        return "<html><title>Edinburgh Datashare DSpace REST API - index</title>" +
                 "<body>"
-                    + "<h1>DSpace REST API</h1>" +
-                    "Server path: " + servletContext.getContextPath() +
+//                    + "<h1>DSpace REST API</h1>" +
+                    + "<h1>EDINBURGH DATASHARE DSpace REST API</h1>" +
+                     "<p>" + 
+                          "For a plain-English guide please see " +
+                          "<a href=\"https://www.wiki.ed.ac.uk/display/datashare/How+to+use+the+DataShare+REST+API\">How to use the DataShare REST API</a> ." +
+                     "</p>" +
+                    "<p><strong>Server path:</strong> " + restUrlAnchorHtmlTag + "</p>" +
+                    "<h2>Reports (GUI)</h2>" +
+                    "<ul>" +
+                       "<li><strong>DSpace REST Query Client: </strong>" + queryClientAnchorHtmlTag + "</li>" +
+                       "<li><strong>Dspace REST Reports Client: </strong>" + reportsClientAnchorHtmlTag  + "</li>" +
+                    "</ul>" +
                     "<h2>Index</h2>" +
                         "<ul>" +
                             "<li>GET / - Return this page.</li>" +
                             "<li>GET /test - Return the string \"REST api is running\" for testing purposes.</li>" +
-                            "<li>POST /login - Method for logging into the DSpace RESTful API. You must post the parameters \"email\" and \"password\". Example: \"email=test@dspace&password=pass\". Returns a JSESSIONID cookie which can be used for future authenticated requests.</li>" +
-                            "<li>GET /shibboleth-login - Method for logging into the DSpace RESTful API with Shibboleth. You must configure Shibboleth to pass the Shibboleth session to this endpoint. This will return you a JSESSIONID cookie which must be included in future requests.</li>" +
-                            "<li>GET /status - Method for retrieving information on the current authenticated user. The request must include the JSESSIONID cookie.</li>" +
-                            "<li>GET /logout - Method for logging out of the DSpace RESTful API. The request must include the JSESSIONID cookie.</li>" +
+                            // "<li>POST /login - Method for logging into the DSpace RESTful API. You must post the parameters \"email\" and \"password\". Example: \"email=test@dspace&password=pass\". Returns a JSESSIONID cookie which can be used for future authenticated requests.</li>" +
+                            // "<li>GET /shibboleth-login - Method for logging into the DSpace RESTful API with Shibboleth. You must configure Shibboleth to pass the Shibboleth session to this endpoint. This will return you a JSESSIONID cookie which must be included in future requests.</li>" +
+                            // "<li>GET /status - Method for retrieving information on the current authenticated user. The request must include the JSESSIONID cookie.</li>" +
+                            // "<li>GET /logout - Method for logging out of the DSpace RESTful API. The request must include the JSESSIONID cookie.</li>" +
                         "</ul>" +
                     "<h2>Communities</h2>" +
                         "<ul>" +
@@ -64,24 +99,24 @@ public class RestIndex {
                             "<li>GET /communities/{communityId} - Returns a community with the specified ID.</li>" +
                             "<li>GET /communities/{communityId}/collections - Returns an array of collections of the specified community.</li>" +
                             "<li>GET /communities/{communityId}/communities - Returns an array of subcommunities of the specified community.</li>" +
-                            "<li>POST /communities - Create a new top-level community. You must post a community.</li>" +
-                            "<li>POST /communities/{communityId}/collections - Create a new collection in the specified community. You must post a collection.</li>" +
-                            "<li>POST /communities/{communityId}/communities - Create a new subcommunity in the specified community. You must post a community.</li>" +
-                            "<li>PUT /communities/{communityId} - Update the specified community.</li>" +
-                            "<li>DELETE /communities/{communityId} - Delete the specified community.</li>" +
-                            "<li>DELETE /communities/{communityId}/collections/{collectionId} - Delete the specified collection in the specified community.</li>" +
-                            "<li>DELETE /communities/{communityId}/communities/{communityId2} - Delete the specified subcommunity (communityId2) in the specified community (communityId).</li>" +
+                            // "<li>POST /communities - Create a new top-level community. You must post a community.</li>" +
+                            // "<li>POST /communities/{communityId}/collections - Create a new collection in the specified community. You must post a collection.</li>" +
+                            // "<li>POST /communities/{communityId}/communities - Create a new subcommunity in the specified community. You must post a community.</li>" +
+                            // "<li>PUT /communities/{communityId} - Update the specified community.</li>" +
+                            // "<li>DELETE /communities/{communityId} - Delete the specified community.</li>" +
+                            // "<li>DELETE /communities/{communityId}/collections/{collectionId} - Delete the specified collection in the specified community.</li>" +
+                            // "<li>DELETE /communities/{communityId}/communities/{communityId2} - Delete the specified subcommunity (communityId2) in the specified community (communityId).</li>" +
                         "</ul>" +
                     "<h2>Collections</h2>" +
                     "<ul>" +
                           "<li>GET /collections - Return all DSpace collections in array.</li>" +
                           "<li>GET /collections/{collectionId} - Return a collection with the specified ID.</li>" +
                           "<li>GET /collections/{collectionId}/items - Return all items of the specified collection.</li>" +
-                          "<li>POST /collections/{collectionId}/items - Create an item in the specified collection. You must post an item.</li>" +
-                          "<li>POST /collections/find-collection - Find a collection by name.</li>" +
-                          "<li>PUT /collections/{collectionId} </li> - Update the specified collection. You must post a collection." +
-                          "<li>DELETE /collections/{collectionId} - Delete the specified collection from DSpace.</li>" +
-                          "<li>DELETE /collections/{collectionId}/items/{itemId} - Delete the specified item (itemId) in the specified collection (collectionId). </li>" +
+                          // "<li>POST /collections/{collectionId}/items - Create an item in the specified collection. You must post an item.</li>" +
+                          // "<li>POST /collections/find-collection - Find a collection by name.</li>" +
+                          // "<li>PUT /collections/{collectionId} </li> - Update the specified collection. You must post a collection." +
+                          // "<li>DELETE /collections/{collectionId} - Delete the specified collection from DSpace.</li>" +
+                          // "<li>DELETE /collections/{collectionId}/items/{itemId} - Delete the specified item (itemId) in the specified collection (collectionId). </li>" +
                       "</ul>" +
                       "<h2>Items</h2>" +
                       "<ul>" +
@@ -89,13 +124,13 @@ public class RestIndex {
                           "<li>GET /items/{item id} - Return the specified item.</li>" +
                           "<li>GET /items/{item id}/metadata - Return metadata of the specified item.</li>" +
                           "<li>GET /items/{item id}/bitstreams - Return bitstreams of the specified item.</li>" +
-                          "<li>POST /items/find-by-metadata-field - Find items by the specified metadata value.</li>" +
-                          "<li>POST /items/{item id}/metadata - Add metadata to the specified item.</li>" +
-                          "<li>POST /items/{item id}/bitstreams - Add a bitstream to the specified item.</li>" +
-                          "<li>PUT /items/{item id}/metadata - Update metadata in the specified item.</li>" +
-                          "<li>DELETE /items/{item id} - Delete the specified item.</li>" +
-                          "<li>DELETE /items/{item id}/metadata - Clear metadata of the specified item.</li>" +
-                          "<li>DELETE /items/{item id}/bitstreams/{bitstream id} - Delete the specified bitstream of the specified item.</li>" +
+                          // "<li>POST /items/find-by-metadata-field - Find items by the specified metadata value.</li>" +
+                          // "<li>POST /items/{item id}/metadata - Add metadata to the specified item.</li>" +
+                          // "<li>POST /items/{item id}/bitstreams - Add a bitstream to the specified item.</li>" +
+                          // "<li>PUT /items/{item id}/metadata - Update metadata in the specified item.</li>" +
+                          // "<li>DELETE /items/{item id} - Delete the specified item.</li>" +
+                          // "<li>DELETE /items/{item id}/metadata - Clear metadata of the specified item.</li>" +
+                          // "<li>DELETE /items/{item id}/bitstreams/{bitstream id} - Delete the specified bitstream of the specified item.</li>" +
                       "</ul>" +
                       "<h2>Bitstreams</h2>" +
                       "<ul>" +
@@ -103,11 +138,11 @@ public class RestIndex {
                           "<li>GET /bitstreams/{bitstream id} - Return the specified bitstream.</li>" +
                           "<li>GET /bitstreams/{bitstream id}/policy - Return policies of the specified bitstream.</li>" +
                           "<li>GET /bitstreams/{bitstream id}/retrieve - Return the contents of the specified bitstream.</li>" +
-                          "<li>POST /bitstreams/{bitstream id}/policy - Add a policy to the specified bitstream.</li>" +
-                          "<li>PUT /bitstreams/{bitstream id}/data - Update the contents of the specified bitstream.</li>" +
-                          "<li>PUT /bitstreams/{bitstream id} - Update metadata of the specified bitstream.</li>" +
-                          "<li>DELETE /bitstreams/{bitstream id} - Delete the specified bitstream from DSpace.</li>" +
-                          "<li>DELETE /bitstreams/{bitstream id}/policy/{policy_id} - Delete the specified bitstream policy.</li>" +
+                          // "<li>POST /bitstreams/{bitstream id}/policy - Add a policy to the specified bitstream.</li>" +
+                          // "<li>PUT /bitstreams/{bitstream id}/data - Update the contents of the specified bitstream.</li>" +
+                          // "<li>PUT /bitstreams/{bitstream id} - Update metadata of the specified bitstream.</li>" +
+                          // "<li>DELETE /bitstreams/{bitstream id} - Delete the specified bitstream from DSpace.</li>" +
+                          // "<li>DELETE /bitstreams/{bitstream id}/policy/{policy_id} - Delete the specified bitstream policy.</li>" +
                       "</ul>" +
                       "<h2>Hierarchy</h2>" +
                       "<ul>" +
@@ -119,12 +154,12 @@ public class RestIndex {
                         "<li>GET /registries/schema/{schema_prefix} - Returns the specified metadata schema</li>" +
                         "<li>GET /registries/schema/{schema_prefix}/metadata-fields/{element} - Returns the metadata field within a schema with an unqualified element name</li>" +
                         "<li>GET /registries/schema/{schema_prefix}/metadata-fields/{element}/{qualifier} - Returns the metadata field within a schema with a qualified element name</li>" +
-                        "<li>POST /registries/schema/ - Add a schema to the schema registry</li>" +
-                        "<li>POST /registries/schema/{schema_prefix}/metadata-fields - Add a metadata field to the specified schema</li>" +
+                        // "<li>POST /registries/schema/ - Add a schema to the schema registry</li>" +
+                        // "<li>POST /registries/schema/{schema_prefix}/metadata-fields - Add a metadata field to the specified schema</li>" +
                         "<li>GET /registries/metadata-fields/{field_id} - Return the specified metadata field</li>" +
-                        "<li>PUT /registries/metadata-fields/{field_id} - Update the specified metadata field</li>" +
-                        "<li>DELETE /registries/metadata-fields/{field_id} - Delete the specified metadata field from the metadata field registry</li>" +
-                        "<li>DELETE /registries/schema/{schema_id} - Delete the specified schema from the schema registry</li>" +
+                        // "<li>PUT /registries/metadata-fields/{field_id} - Update the specified metadata field</li>" +
+                        // "<li>DELETE /registries/metadata-fields/{field_id} - Delete the specified metadata field from the metadata field registry</li>" +
+                        // "<li>DELETE /registries/schema/{schema_id} - Delete the specified schema from the schema registry</li>" +
                     "</ul>" +
                     "<h2>Query/Reporting Tools</h2>" +
                     "<ul>" +
@@ -136,8 +171,9 @@ public class RestIndex {
                         "<li>GET /filtered-items - Retrieve a set of items based on a metadata query and a set of filters</li>" +
                     "</ul>" +
                 "</body></html> ";
+        // DATASHARE - END
     }
-
+             
     /**
      * Method only for testing whether the REST API is running.
      *
