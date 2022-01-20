@@ -1,7 +1,8 @@
 //Preview
 $(document).ready(function() {
 	// Only csv, ts, tsv, fasta, fas, fa, or txt files (case insesitive so ig)
-	var REGEX_FOR_DSPACE_FILE_URL = /\/bitstream\/handle\/\d*\/\d*\/(.)+(\.csv|\.txt|\.fasta|\.fas|\.fa|\.tsv|\.ts)(?=(\?))/ig;
+	var REGEX_FOR_DSPACE_FILE_URL = /\/bitstream\/handle\/\d*\/\d*\/(.)+(\.cif|\.csv|\.dat|\.embl|\.f90|\.fasta|\.fas|\.fa|\.gb|\.md|\.pdb|\.sas|\.sps|\.r|\.tab|\.textgrid|\.text|\.txt|\.tsv|\.ts|\.xml)(?=(\?))/ig;
+    var MAX_NUMBER_OF_LINES_TO_PREVIEW = 12;
 
 	var myModal = '<div class="modal fade" id="myModal">' +
 	'<div class="modal-dialog" style="min-width: 80%;">' +
@@ -82,9 +83,9 @@ $(document).ready(function() {
 //						console.log(data.content);
 						var content = data.content;
 						var lines = content.split(/\^M\r\n|\n/);
-						var numOfLinesDisplay = lines.length < 30 ? lines.length : 30;
+						var numOfLinesToDisplay = lines.length < MAX_NUMBER_OF_LINES_TO_PREVIEW ? lines.length : MAX_NUMBER_OF_LINES_TO_PREVIEW;
 						var displayText = "";
-						for (var line = 0; line < numOfLinesDisplay; line++) {
+						for (var line = 0; line < numOfLinesToDisplay; line++) {
 //							console.log(line + " --> " + lines[line]);
 							if ((fileName.toLowerCase().endsWith(".csv") || fileName.toLowerCase().endsWith(".tsv")) && previewInTableFormatRequired) {
 								displayText = displayText + lines[line] + "\n";
