@@ -2,19 +2,19 @@
 $(document).ready(function() {
 	// Only csv, ts, tsv, fasta, fas, fa, or txt files (case insesitive so ig)
 	var REGEX_FOR_DSPACE_FILE_URL = /\/bitstream\/handle\/\d*\/\d*\/(.)+(\.cif|\.csv|\.dat|\.embl|\.f90|\.fasta|\.fas|\.fa|\.gb|\.md|\.pdb|\.sas|\.sps|\.r|\.tab|\.textgrid|\.text|\.txt|\.tsv|\.ts|\.xml)(?=(\?))/ig;
-    var MAX_NUMBER_OF_LINES_TO_PREVIEW = 12;
+	var MAX_NUMBER_OF_LINES_TO_PREVIEW = 12;
 
-	var myModal = '<div class="modal fade" id="myModal">' +
-	'<div class="modal-dialog" style="min-width: 80%;">' +
+	var myModal = '<div class="modal fade" id="myModal" role="dialog">' +
+	'<div class="modal-dialog" style="min-width: 80%;" role="document">' +
 	'<div class="modal-content">' +
 	'<div id="modal-header" class="modal-header">' +
 	'<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
 	'<span aria-hidden="true">&times;</span>' +
 	'</button>' +
-	'<h2 id="modal-title" class="modal-title" style="word-wrap: break-word; width: 75%;">Modal title</h2>' +
+	'<h2 id="modal-title" class="modal-title" style="cursor:move; word-wrap: break-word; width: 75%;">Modal title</h2>' +
 	'<div id="modal-warning-about-format" class"small-text text-danger"></div>' +
 	'</div>' +
-	'<div id="modal-data" class="modal-body"></div>' +
+	'<div id="modal-data" class="modal-body" style="overflow: auto;"></div>' +
 	'<div class="modal-footer">' +
 	'<a href="#" data-dismiss="modal" class="btn">Close</a>' +
 	'</div>' +
@@ -22,12 +22,13 @@ $(document).ready(function() {
 	'</div>' +
 	'</div>';
 
-	$('body').append(myModal);
-	$('#myModal').modal({
-		backdrop: 'static',
-		keyboard: false,
-		show: false
-	});
+	var myModalContainer = '<div id="myModalContainer"></div>';
+
+	// Add empty myModalContainer to body
+	// We will add myModal to it inside the
+	// on click preview function below
+	$('body').append(myModalContainer);
+
 
 	if ($('.item-page-field-wrapper').length > 0) {
 		$('a[test]').each(function() {
@@ -48,6 +49,9 @@ $(document).ready(function() {
 		});
 
 		$('.preview').on('click', function() {
+
+			createAndInitializeMyModal();
+
 			var previewInTableFormatRequired = $(this).children("span:contains('table')").length > 0;
 			var getUrl = window.location;
 			var serverUrl = getUrl.protocol + "//" + getUrl.host;
@@ -121,12 +125,12 @@ $(document).ready(function() {
 		var table = "<div class='table-responsive'> <table class='table table-striped table-bordered'>";
 		var data = results.data;
 
-		for (i = 0; i < data.length; i++) {
+		for (var i = 0; i < data.length; i++) {
 			table += "<tr>";
 			var row = data[i];
 			var cells = row.join(",").split(",");
 
-			for (j = 0; j < cells.length; j++) {
+			for (var j = 0; j < cells.length; j++) {
 				table += "<td>";
 				table += cells[j];
 				table += "</th>";
@@ -141,5 +145,28 @@ $(document).ready(function() {
 			delimiter: "auto",
 			complete: displayHTMLTable,
 	};
+
+	// To gets round issue that if the modal is resized, then the modal retains it size.
+	// This ensures we get a new modal each time with size based on content
+	function createAndInitializeMyModal() {
+		// Delete child elements of myModalContainer
+		$('#myModalContainer').empty();
+		// Add a new myModal html
+		$('#myModalContainer').append(myModal);
+		$('#myModal').modal({
+			backdrop: 'static',
+			keyboard: false,
+			show: false
+		});
+
+
+		$('.modal-content').resizable({
+			alsoResize: ".modal-dialog",
+			minWidth:300,
+			minHeight:300
+		});
+
+		$('.modal-dialog').draggable();
+	}
 
 });
