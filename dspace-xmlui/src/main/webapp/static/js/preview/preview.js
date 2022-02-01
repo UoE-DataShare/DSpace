@@ -39,7 +39,7 @@ $(document).ready(function() {
 				var matchStr = fileUrl.toLowerCase().match(REGEX_FOR_DSPACE_FILE_URL);
 				console.log("matchStr:", matchStr);
 				if (matchStr && matchStr.length > 0) {
-					if(matchStr[0].endsWith(".csv") || matchStr[0].endsWith(".tsv")) {
+					if(matchStr[0].endsWith(".csv")) {
 						$('<br><button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\" ><span style="color: #000;">[Preview file]</span></button> <button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\"><span style="color: #000;">[Preview as table]</span></button><br>').insertAfter($(this));
 					} else {
 						$('<br><button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\"><span style="color: #000;">[Preview file]</span></button>').insertAfter($(this));
@@ -98,7 +98,7 @@ $(document).ready(function() {
 							}
 						}
 
-						if ((fileName.toLowerCase().endsWith(".csv") || fileName.toLowerCase().endsWith(".tsv")) && previewInTableFormatRequired) {
+						if (fileName.toLowerCase().endsWith(".csv") && previewInTableFormatRequired) {
 //							console.log("Table format: ", fileName);
 //							console.log(displayText);
 							var formatWarning = "* Please note the table format may be incorrect in some cases.";
@@ -125,7 +125,7 @@ $(document).ready(function() {
 		var table = "<div class='table-responsive'> <table class='table table-striped table-bordered'>";
 		var data = results.data;
 
-		for (var i = 0; i < data.length; i++) {
+		for (var i = 0; i < data.length - 1; i++) {
 			table += "<tr>";
 			var row = data[i];
 			var cells = row.join(",").split(",");
