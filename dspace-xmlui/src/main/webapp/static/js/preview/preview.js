@@ -57,7 +57,7 @@ $(document).ready(function() {
 			var serverUrl = getUrl.protocol + "//" + getUrl.host;
 			var baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
 			var fileUrl = serverUrl + $(this).prevUntil('a[test]').last().prev().attr('href');
-			var previewUrl = encodeURI(serverUrl + "/datashare-preview/preview?file=" + fileUrl);
+			var previewUrl = encodeURI(serverUrl + "/datashare-preview/preview");
 			console.log("previewUrl : ", previewUrl);
 
 			var matchStr = fileUrl.match(REGEX_FOR_DSPACE_FILE_URL);

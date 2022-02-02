@@ -130,9 +130,9 @@
                                <div>
                                  <a href="http://www.ed.ac.uk/">THE UNIVERSITY OF EDINBURGH</a>
                                </div>
-                               <div id="footer-dsa" class="hidden-xs">
-                                 <a href="https://assessment.datasealofapproval.org/assessment_175/seal/html/">
-                                   <img border="0" src="{$theme-path}/images/dsa.png" alt="dsa_logo" width="80"/>
+                               <div id="footer-coretrustseal_logo" class="hidden-xs">
+                                 <a href="https://www.coretrustseal.org/maps/fullscreen/10/?marker=366">
+                                   <img border="0" src="{$theme-path}/images/CoreTrustSeal-logo.jpg" alt="coretrustseal_logo" width="80"/>
                                  </a>
                                </div>
                              </div>

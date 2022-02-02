@@ -121,18 +121,18 @@
                            <div id="footer-1">
                              <div class="container">
                                <div>
-                                 <a href="https://www.ed.ac.uk/">THE UNIVERSITY OF EDINBURGH</a>
-                               </div>
-                               <div id="footer-dsa" class="hidden-xs">
-                                 <a href="https://assessment.datasealofapproval.org/assessment_175/seal/html/">
-                                   <img border="0" src="{$theme-path}/images/dsa.png" alt="dsa_logo" width="80"/>
-                                 </a>
+                                 <a href="http://www.ed.ac.uk/">THE UNIVERSITY OF EDINBURGH</a>
                                </div>
                              </div>
                            </div>
                            </div>
                            <div id="footer-2">
                              <div class="container">
+                              <div id="footer-coretrustseal_logo" class="pull-right hidden-xs">
+                                 <a href="https://www.coretrustseal.org/maps/fullscreen/10/?marker=366">
+                                   <img border="0" src="{$theme-path}/images/CoreTrustSeal-logo.jpg" alt="coretrustseal_logo" width="80"/>
+                                 </a>
+                               </div>
                                <div id="footer-2-col-1">
                                  <ul>
                                    <li>
