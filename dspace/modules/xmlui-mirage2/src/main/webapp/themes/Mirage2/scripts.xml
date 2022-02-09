@@ -7,9 +7,21 @@
 -->
 <scripts>
     <!-- build:js scripts/theme.js-->
-    <script src="vendor/jquery/jquery.min.js">&#160;</script>
+    <script src="vendor/jquery/dist/jquery.min.js">&#160;</script>
+    <script src="vendor/jquery-ui/jquery-ui.min.js">&#160;</script>
+    <!--
     <script src="vendor/jquery-ui/ui/jquery.ui.core.js">&#160;</script>
     <script src="vendor/jquery-ui/ui/jquery.ui.datepicker.js">&#160;</script>
+    <script src="vendor/jquery-ui/ui/jquery.ui.widget.js">&#160;</script>
+    <script src="vendor/jquery-ui/ui/jquery.ui.position.js">&#160;</script>
+    <script src="vendor/jquery-ui/ui/jquery.ui.menu.js">&#160;</script>
+    <script src="vendor/jquery-ui/ui/jquery.ui.autocomplete.js">&#160;</script>
+    -->
+    <!-- DATASHARE start -->
+    <script src="vendor/jquery-ui/ui/jquery.ui.widget.js">&#160;</script>
+    <script src="vendor/jquery-ui/ui/jquery.ui.dialog.js">&#160;</script>
+    <!-- DATASHARE end -->
+
     <script src="vendor/handlebars/handlebars.js">&#160;</script>
     <script src="vendor/holderjs/holder.js">&#160;</script>
     <!--<script src="vendor/bootstrap-sass-official/assets/javascripts/bootstrap/affix.js">&#160;</script>-->
@@ -24,8 +36,6 @@
     <script src="vendor/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js">&#160;</script>
     <script src="vendor/bootstrap-sass-official/assets/javascripts/bootstrap/popover.js">&#160;</script>
     <script src="vendor/bootstrap-sass-official/assets/javascripts/bootstrap/transition.js">&#160;</script>
-    <script src="vendor/jquery-ui/ui/jquery.ui.widget.js">&#160;</script>
-    <script src="vendor/jquery-ui/ui/jquery.ui.dialog.js">&#160;</script>
     <script src="scripts/utils.js">&#160;</script>
     <script src="scripts/search-controls.js">&#160;</script>
     <script src="scripts/sidebar.js">&#160;</script>
