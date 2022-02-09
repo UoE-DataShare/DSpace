@@ -8,6 +8,8 @@
 package org.dspace.rest;
 
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
@@ -44,18 +46,51 @@ public class RestIndex {
     @Produces(MediaType.TEXT_HTML)
     public String sayHtmlHello(@Context ServletContext servletContext) {
     	// TODO Better graphics, add arguments to all methods. (limit, offset, item and so on)
-        return "<html><title>DSpace REST - index</title>" +
+    	// DATASHARE - start
+    	String baseUrl = "";
+    	
+		try {
+			String host = InetAddress.getLocalHost().getHostName();
+			if(host.equals("lac-datashare-live")) {
+				baseUrl = "https://datashare.ed.ac.uk";
+			} else if(host.equals("lac-datashare-test")) {
+				baseUrl = "https://test.datashare.ed.ac.uk";
+			}
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String restUrl = baseUrl + servletContext.getContextPath();
+		String queryClientUrl = restUrl + "/static/reports/query.html";
+		String reportsClientUrl = restUrl + "/static/reports/index.html";
+		
+		String restUrlAnchorHtmlTag = "<a href=\"" + restUrl +"\">" + restUrl + "</a>";
+		String queryClientAnchorHtmlTag = "<a href=\"" + queryClientUrl +"\">" + queryClientUrl + "</a>";
+		String reportsClientAnchorHtmlTag = "<a href=\"" + reportsClientUrl +"\">" + reportsClientUrl + "</a>";
+		
+        return "<html><title>Edinburgh Datashare DSpace REST API - index</title>" +
                 "<body>"
-                    + "<h1>DSpace REST API</h1>" +
-                    "Server path: " + servletContext.getContextPath() +
+//                    + "<h1>DSpace REST API</h1>" +
+                    + "<h1>EDINBURGH DATASHARE DSpace REST API</h1>" +
+                     "<p>" + 
+                          "For a plain-English guide please see " +
+                          "<a href=\"https://www.wiki.ed.ac.uk/display/datashare/How+to+use+the+DataShare+REST+API\">How to use the DataShare REST API</a> ." +
+                     "</p>" +
+                    "<p><strong>Server path:</strong> " + restUrlAnchorHtmlTag + "</p>" +
+                    "<h2>Reports (GUI)</h2>" +
+                    "<ul>" +
+                       "<li><strong>DSpace REST Query Client: </strong>" + queryClientAnchorHtmlTag + "</li>" +
+                       "<li><strong>Dspace REST Reports Client: </strong>" + reportsClientAnchorHtmlTag  + "</li>" +
+                    "</ul>" +
                     "<h2>Index</h2>" +
                         "<ul>" +
                             "<li>GET / - Return this page.</li>" +
                             "<li>GET /test - Return the string \"REST api is running\" for testing purposes.</li>" +
                             // "<li>POST /login - Method for logging into the DSpace RESTful API. You must post the parameters \"email\" and \"password\". Example: \"email=test@dspace&password=pass\". Returns a JSESSIONID cookie which can be used for future authenticated requests.</li>" +
-                            "<li>GET /shibboleth-login - Method for logging into the DSpace RESTful API with Shibboleth. You must configure Shibboleth to pass the Shibboleth session to this endpoint. This will return you a JSESSIONID cookie which must be included in future requests.</li>" +
-                            "<li>GET /status - Method for retrieving information on the current authenticated user. The request must include the JSESSIONID cookie.</li>" +
-                            "<li>GET /logout - Method for logging out of the DSpace RESTful API. The request must include the JSESSIONID cookie.</li>" +
+                            // "<li>GET /shibboleth-login - Method for logging into the DSpace RESTful API with Shibboleth. You must configure Shibboleth to pass the Shibboleth session to this endpoint. This will return you a JSESSIONID cookie which must be included in future requests.</li>" +
+                            // "<li>GET /status - Method for retrieving information on the current authenticated user. The request must include the JSESSIONID cookie.</li>" +
+                            // "<li>GET /logout - Method for logging out of the DSpace RESTful API. The request must include the JSESSIONID cookie.</li>" +
                         "</ul>" +
                     "<h2>Communities</h2>" +
                         "<ul>" +
@@ -136,8 +171,9 @@ public class RestIndex {
                         "<li>GET /filtered-items - Retrieve a set of items based on a metadata query and a set of filters</li>" +
                     "</ul>" +
                 "</body></html> ";
+        // DATASHARE - END
     }
-
+             
     /**
      * Method only for testing whether the REST API is running.
      *
