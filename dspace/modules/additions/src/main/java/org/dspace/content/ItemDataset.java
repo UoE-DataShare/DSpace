@@ -349,12 +349,13 @@ public class ItemDataset  {
 
 		private void createZip(Context context) {
 			String tmpZip = getTmpFileName();
-
+			FileOutputStream fos  = null;
+			ZipOutputStream zos = null;
 			try {
 				final byte[] BUFFER = new byte[8192];
 
-				FileOutputStream fos = new FileOutputStream(tmpZip);
-				ZipOutputStream zos = new ZipOutputStream(fos);
+				fos = new FileOutputStream(tmpZip);
+				zos = new ZipOutputStream(fos);
 				zos.setLevel(0);
 
 				ItemService itemService = ContentServiceFactory.getInstance().getItemService();
@@ -439,6 +440,24 @@ public class ItemDataset  {
 			} catch (Exception ex) {
 				LOG.error(ex);
 				throw new RuntimeException(ex);
+			} finally {
+				//Close open streams
+				try {
+					fos.close();
+				} catch(Exception e) {
+					
+				}
+				try {
+					zos.close();
+				} catch(Exception e) {
+					
+				}
+				// Delete temporary file on exit
+				try {
+					new File(tmpZip).delete();
+				} catch(Exception e) {
+					
+				} 
 			}
 		}
 	}
