@@ -40,7 +40,7 @@ $(document).ready(function() {
 				console.log("matchStr:", matchStr);
 				if (matchStr && matchStr.length > 0) {
 					if(matchStr[0].endsWith(".csv")) {
-						$('<br><button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\" ><span style="color: #000;">[Preview file]</span></button> <button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\"><span style="color: #000;">[Preview as table]</span></button><br>').insertAfter($(this));
+						$('<br><button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\" ><span style="color: #000;">[Preview file]</span></button> <button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\"><span style="color: #000;">[Preview as table (Jenkins)]</span></button><br>').insertAfter($(this));
 					} else {
 						$('<br><button type=\"button\" class=\"preview btn btn-link\" style=\"display: inline-block;\"><span style="color: #000;">[Preview file]</span></button>').insertAfter($(this));
 					}
