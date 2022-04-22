@@ -116,7 +116,8 @@ public class SelectCollectionStep extends AbstractSubmissionStep
         }
         
         Button submit = list.addItem().addButton("submit");
-        submit.setValue(T_submit_next);
+        //submit.setValue(T_submit_next);
+        submit.setValue("next (DS changed)");
 
         context.setMode(originalMode);
     }
