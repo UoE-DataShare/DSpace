@@ -252,9 +252,20 @@ public class ItemDataset  {
 			String protocol = bUrl[0];
 			String host = bUrl[1];
 			String fPath = "/download/" + getFileName();
+			LOG.debug("getURL(): 1 - host: " + host);
 			if (host.contains(":")) {
+				LOG.debug("getURL(): 2 - host: " + host);
 				String aHost[] = host.split(":");
 				host = aHost[0];
+				LOG.debug("getURL(): 3 - host: " + host);
+				LOG.debug("getURL(): 4 - aHost[1]: " + aHost[1]);
+				// DATASHARE - Fix for local docker
+				// where aHost[1] value like 8080/xmlui causes
+				// a NumberFormatException in Integer.parseInt(aHost[1]) below.
+				if(aHost[1].contains("/")) {
+					aHost[1] = aHost[1].split("/")[0];
+				}
+				LOG.debug("getURL(): 5 - aHost[1]: " + aHost[1]);
 				url = new URL(protocol, host, Integer.parseInt(aHost[1]), fPath);
 			} else {
 				url = new URL(protocol, host, fPath);

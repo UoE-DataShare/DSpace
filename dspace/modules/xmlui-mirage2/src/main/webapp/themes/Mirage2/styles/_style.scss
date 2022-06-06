@@ -342,7 +342,10 @@ padding-bottom: 0.2em;
 
 /*************************** resumable upload *******************************/
 
-@import "../vendor/jquery-ui/themes/base/jquery.ui.dialog.css";
+// DATASHARE Start
+// just adding a literal "@import url(../node_modules/jquery-ui/..)" in our CSS.
+@import "../node_modules/jquery-ui-dist/jquery-ui";
+// DATASHARE End
 
 #aspect_submission_StepTransformer_div_submit-file-upload{
   padding-top: 0.5em;
