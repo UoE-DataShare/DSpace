@@ -147,7 +147,7 @@
 									tmp_val = item.displayedValue;
 								}
 								return {
-									label: item.displayedValue + " (" + item.count + ")",
+									label: escapeHtml(item.displayedValue) + " (" + item.count + ")",
 									value: tmp_val
 								};
 							}))			
@@ -159,6 +159,11 @@
 	function validateFilters() {
 		return document.getElementById("filterquery").value.length > 0;
 	}
+	// Generic HTML escape utility
+	var escapeHtml = s => (s + '').replace(/[&<>"']/g, m => ({
+		'&': '&amp;', '<': '&lt;', '>': '&gt;',
+		'"': '&quot;', "'": '&#39;'
+	})[m]);
 </script>		
 </c:set>
 
@@ -204,7 +209,7 @@
         <input type="text" size="50" id="query" name="query" value="<%= (query==null ? "" : Utils.addEntities(query)) %>"/>
         <input type="submit" id="main-query-submit" class="btn btn-primary" value="<fmt:message key="jsp.general.go"/>" />
 <% if (StringUtils.isNotBlank(spellCheckQuery)) {%>
-	<p class="lead"><fmt:message key="jsp.search.didyoumean"><fmt:param><a id="spellCheckQuery" data-spell="<%= Utils.addEntities(spellCheckQuery) %>" href="#"><%= spellCheckQuery %></a></fmt:param></fmt:message></p>
+	<p class="lead"><fmt:message key="jsp.search.didyoumean"><fmt:param><a id="spellCheckQuery" data-spell="<%= Utils.addEntities(spellCheckQuery) %>" href="#"><%= Utils.addEntities(spellCheckQuery) %></a></fmt:param></fmt:message></p>
 <% } %>                  
         <input type="hidden" value="<%= rpp %>" name="rpp" />
         <input type="hidden" value="<%= Utils.addEntities(sortedBy) %>" name="sort_by" />
