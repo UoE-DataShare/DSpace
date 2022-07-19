@@ -98,11 +98,17 @@ public class UserLicenseStep extends AbstractSubmissionStep
 //    			currentLicense == UserLicense.OPEN_DATA_COMMONS,
 //    			UserLicense.OPEN_DATA_COMMONS.ordinal(),
 //    			"Open Data Commons");
+        //  DATASHARE - start
+        // Replaced message("license.nolicense.text") with "Other"
+//    	license.addOption(
+//    			currentLicense == UserLicense.NO_LICENSE,
+//    			UserLicense.NO_LICENSE.ordinal(),
+//    			message("license.nolicense.text"));
     	license.addOption(
     			currentLicense == UserLicense.NO_LICENSE,
     			UserLicense.NO_LICENSE.ordinal(),
-    			message("license.nolicense.text"));
-
+                "Other");
+        //  DATASHARE - end 
     	form.addLabel(message("license.nolicense.label"));
            
     	// rights text area
