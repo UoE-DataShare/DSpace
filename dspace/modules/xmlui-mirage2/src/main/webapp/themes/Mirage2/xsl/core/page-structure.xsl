@@ -121,18 +121,18 @@
                            <div id="footer-1">
                              <div class="container">
                                <div>
-                                 <a href="https://www.ed.ac.uk/">THE UNIVERSITY OF EDINBURGH</a>
-                               </div>
-                               <div id="footer-dsa" class="hidden-xs">
-                                 <a href="https://assessment.datasealofapproval.org/assessment_175/seal/html/">
-                                   <img border="0" src="{$theme-path}/images/dsa.png" alt="dsa_logo" width="80"/>
-                                 </a>
+                                 <a href="http://www.ed.ac.uk/">THE UNIVERSITY OF EDINBURGH</a>
                                </div>
                              </div>
                            </div>
                            </div>
                            <div id="footer-2">
                              <div class="container">
+                              <div id="footer-coretrustseal_logo" class="pull-right hidden-xs">
+                                 <a href="https://www.coretrustseal.org/maps/fullscreen/10/?marker=366">
+                                   <img border="0" src="{$theme-path}/images/CoreTrustSeal-logo.jpg" alt="coretrustseal_logo" width="80"/>
+                                 </a>
+                               </div>
                                <div id="footer-2-col-1">
                                  <ul>
                                    <li>
@@ -298,10 +298,14 @@
             <xsl:text disable-output-escaping="yes">&lt;!--[if lt IE 9]&gt;
                 &lt;script src="</xsl:text><xsl:value-of select="concat($theme-path, 'vendor/html5shiv/dist/html5shiv.js')"/><xsl:text disable-output-escaping="yes">"&gt;&#160;&lt;/script&gt;
                 &lt;script src="</xsl:text><xsl:value-of select="concat($theme-path, 'vendor/respond/respond.min.js')"/><xsl:text disable-output-escaping="yes">"&gt;&#160;&lt;/script&gt;
-                &lt;![endif]--&gt;</xsl:text>
-
+                &lt;![endif]--&gt;
+            </xsl:text>
+            
             <!-- Modernizr enables HTML5 elements & feature detects -->
-            <script src="{concat($theme-path, 'vendor/modernizr/modernizr.js')}">&#160;</script>
+            <xsl:text disable-output-escaping="yes">
+                &lt;script src="</xsl:text><xsl:value-of select="concat($theme-path, 'scripts/modernizr.min.js')"/><xsl:text disable-output-escaping="yes">"&gt;&#160;&lt;/script&gt;
+            </xsl:text>
+
 
             <!-- Add the title in -->
             <xsl:variable name="page_title" select="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='title'][last()]" />

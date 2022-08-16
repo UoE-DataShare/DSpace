@@ -252,9 +252,20 @@ public class ItemDataset  {
 			String protocol = bUrl[0];
 			String host = bUrl[1];
 			String fPath = "/download/" + getFileName();
+			LOG.debug("getURL(): 1 - host: " + host);
 			if (host.contains(":")) {
+				LOG.debug("getURL(): 2 - host: " + host);
 				String aHost[] = host.split(":");
 				host = aHost[0];
+				LOG.debug("getURL(): 3 - host: " + host);
+				LOG.debug("getURL(): 4 - aHost[1]: " + aHost[1]);
+				// DATASHARE - Fix for local docker
+				// where aHost[1] value like 8080/xmlui causes
+				// a NumberFormatException in Integer.parseInt(aHost[1]) below.
+				if(aHost[1].contains("/")) {
+					aHost[1] = aHost[1].split("/")[0];
+				}
+				LOG.debug("getURL(): 5 - aHost[1]: " + aHost[1]);
 				url = new URL(protocol, host, Integer.parseInt(aHost[1]), fPath);
 			} else {
 				url = new URL(protocol, host, fPath);
@@ -349,12 +360,13 @@ public class ItemDataset  {
 
 		private void createZip(Context context) {
 			String tmpZip = getTmpFileName();
-
+			FileOutputStream fos  = null;
+			ZipOutputStream zos = null;
 			try {
 				final byte[] BUFFER = new byte[8192];
 
-				FileOutputStream fos = new FileOutputStream(tmpZip);
-				ZipOutputStream zos = new ZipOutputStream(fos);
+				fos = new FileOutputStream(tmpZip);
+				zos = new ZipOutputStream(fos);
 				zos.setLevel(0);
 
 				ItemService itemService = ContentServiceFactory.getInstance().getItemService();
@@ -439,6 +451,24 @@ public class ItemDataset  {
 			} catch (Exception ex) {
 				LOG.error(ex);
 				throw new RuntimeException(ex);
+			} finally {
+				//Close open streams
+				try {
+					fos.close();
+				} catch(Exception e) {
+					
+				}
+				try {
+					zos.close();
+				} catch(Exception e) {
+					
+				}
+				// Delete temporary file on exit
+				try {
+					new File(tmpZip).delete();
+				} catch(Exception e) {
+					
+				} 
 			}
 		}
 	}

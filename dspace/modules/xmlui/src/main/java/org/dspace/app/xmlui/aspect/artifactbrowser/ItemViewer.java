@@ -232,6 +232,8 @@ public class ItemViewer extends AbstractDSpaceTransformer implements CacheablePr
         // DATASHARE - start
         pageMeta.addMetadata("javascript", "static").addContent("static/js/datacite_metadata_schema_org_request.js");
         pageMeta.addMetadata("javascript", "static").addContent("static/js/altmetric-badge.js");
+        pageMeta.addMetadata("javascript", "static").addContent("static/js/preview/preview.js");
+        pageMeta.addMetadata("javascript", "static").addContent("static/js/preview/papaparse.min.js");
         // DATASHARE - end
 	
 	// Add persistent identifiers
