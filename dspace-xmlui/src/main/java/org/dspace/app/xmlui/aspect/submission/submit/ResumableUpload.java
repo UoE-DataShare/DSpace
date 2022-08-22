@@ -836,7 +836,8 @@ public class ResumableUpload extends AbstractAction
 
 				for (int i = 1; i <= this.resumableTotalChunks; i++) 
 				{
-					File fi = new File(chunkPath.concat(Integer.toString(i)));
+					String partId = Integer.toString(i);
+					File fi = new File(chunkPath.concat("[" + partId + ", " + partId + "]"));
 					try 
 					{
 						InputStream is = new FileInputStream(fi);
