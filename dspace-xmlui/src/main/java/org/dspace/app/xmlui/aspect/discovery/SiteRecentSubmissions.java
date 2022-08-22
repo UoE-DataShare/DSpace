@@ -7,10 +7,12 @@
  */
 package org.dspace.app.xmlui.aspect.discovery;
 
+import org.dspace.app.xmlui.utils.UIException;
 import org.dspace.app.xmlui.wing.Message;
 import org.dspace.app.xmlui.wing.WingException;
 import org.dspace.app.xmlui.wing.element.Body;
 import org.dspace.app.xmlui.wing.element.Division;
+import org.dspace.app.xmlui.wing.element.PageMeta;
 import org.dspace.app.xmlui.wing.element.ReferenceSet;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.content.DSpaceObject;
@@ -67,4 +69,24 @@ public class SiteRecentSubmissions extends AbstractRecentSubmissionTransformer {
         }
 
     }
+    
+    // DATASHARE - start  
+    /**
+     * Add a javascript link to static/js/datashare-landing-page.js to the landing page.
+     * Allow for the fact that file might not exist.
+     */
+    @Override
+    public void addPageMeta(PageMeta pageMeta) throws SAXException,
+            WingException, UIException, SQLException, IOException,
+            AuthorizeException
+    {   
+    	try {
+    		pageMeta.addMetadata("javascript", "static").addContent("static/js/datashare-landing-page.js");
+    	} catch(Exception e) {
+    		// Do nothing if file does not exist
+    	}
+    }
+    // DATASHARE - end
+
+
 }
