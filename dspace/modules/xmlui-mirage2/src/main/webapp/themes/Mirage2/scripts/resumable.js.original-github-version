@@ -267,10 +267,6 @@
       }else if(item.isDirectory){
         // item is already a directory entry, just assign
         entry = item;
-        cb();
-        // Datashare - start
-        return alert("You cannot upload a directory. Only file selections allowed.");
-        // Datashare - end 
       }else if(item instanceof File) {
         items.push(item);
       }
