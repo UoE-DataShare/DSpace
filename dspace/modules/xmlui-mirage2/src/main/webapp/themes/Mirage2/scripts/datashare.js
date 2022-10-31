@@ -211,3 +211,12 @@ $(document).ready(function(){
         }
     }
 });
+
+// Rename buttons in Submission workflow for clarifying Save and Exit process
+$(document).ready(function() {
+	try {
+	   $("#aspect_submission_submit_SaveOrRemoveStep_field_submit_back").html('Continue submission');
+	   $("#aspect_submission_submit_SaveOrRemoveStep_field_submit_save").html('Save and exit');
+	   $("#aspect_submission_submit_SaveOrRemoveStep_field_submit_remove").html('Delete submission');
+	  } catch(E) {}
+});
