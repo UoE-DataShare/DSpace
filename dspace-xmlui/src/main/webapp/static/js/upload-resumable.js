@@ -85,7 +85,7 @@
 		var rdId = 'aspect_submission_StepTransformer_div_resumable-drop';
 		$('#' + rdId + ' p:first').addClass('glyphicon glyphicon-upload');
 		r.assignDrop($('#' + rdId)[0]);
-		r.assignBrowse($('#' + rdId)[0]);
+		r.assignBrowse($('#' + rdId)[0], false); // false prevents selecting directory
 
 		// set up progress bar and button
 		var themePath = window.DSpace.theme_path;
