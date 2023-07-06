@@ -919,19 +919,8 @@
         <xsl:if test="dri:body/dri:div[@n='lookup']">
             <xsl:call-template name="choiceLookupPopUpSetup"/>
         </xsl:if>
-
-        <!-- Add a google analytics script if the key is present -->
-        <xsl:if test="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='google'][@qualifier='analytics']">
-            <script><xsl:text>
-                  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-                  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-                  ga('create', '</xsl:text><xsl:value-of select="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='google'][@qualifier='analytics']"/><xsl:text>', '</xsl:text><xsl:value-of select="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='request'][@qualifier='serverName']"/><xsl:text>');
-                  ga('send', 'pageview');
-           </xsl:text></script>
-        </xsl:if>
+        <!-- Call Google Analytics template -->
+        <xsl:call-template name="addJavascript-google-analytics"/>
     </xsl:template>
 
     <!--The Language Selection-->
@@ -971,6 +960,23 @@
                 </ul>
             </li>
         </xsl:if>
+    </xsl:template>
+
+    <!-- Google Analytics -->
+    <xsl:template name="addJavascript-google-analytics">
+       <!-- Add a google analytics script if the key is present -->
+       <xsl:if test="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='google'][@qualifier='analytics']">
+        <script>
+            <xsl:attribute name="async">true</xsl:attribute>
+            <xsl:attribute name="src"><xsl:text>https://www.googletagmanager.com/gtag/js?id=</xsl:text><xsl:value-of select="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='google'][@qualifier='analytics']"/></xsl:attribute>
+        </script>
+        <script><xsl:text>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '</xsl:text><xsl:value-of select="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='google'][@qualifier='analytics']"/><xsl:text>');</xsl:text>
+        </script>
+      </xsl:if>
     </xsl:template>
 
 </xsl:stylesheet>
