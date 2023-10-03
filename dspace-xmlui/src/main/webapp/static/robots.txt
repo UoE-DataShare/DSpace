@@ -115,6 +115,18 @@ Disallow: /
 User-agent: fast
 Disallow: /
 
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
 #
 # If your DSpace is going down because of someone using recursive wget, 
 # you can activate the following rule.
