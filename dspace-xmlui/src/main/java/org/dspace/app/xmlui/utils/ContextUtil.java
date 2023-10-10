@@ -116,12 +116,16 @@ public class ContextUtil
             if (useProxies == null) {
                 useProxies = DSpaceServicesFactory.getInstance().getConfigurationService().getBooleanProperty("useProxies", false);
             }
-            if(useProxies && request.getHeader("X-Forwarded-For") != null)
+            String ipHeader = request.getHeader("NS-X-Forwarded-For");
+            if (ipHeader == null) {
+                ipHeader = request.getHeader("X-Forwarded-For");
+            }
+            if(useProxies && ipHeader != null)
             {
                 /* This header is a comma delimited list */
-	            for(String xfip : request.getHeader("X-Forwarded-For").split(","))
+	            for(String xfip : ipHeader.split(","))
                 {
-                    if(!request.getHeader("X-Forwarded-For").contains(ip))
+                    if(!ipHeader.contains(ip))
                     {
                         ip = xfip.trim();
                     }
