@@ -728,7 +728,7 @@
 	<!-- org.dspace.app.xmlui.Submission.submit.SelectCollection -->
 	<message key="xmlui.Submission.submit.SelectCollection.head">Select a collection</message>
 	<message key="xmlui.Submission.submit.SelectCollection.collection">Collection</message>
-	<message key="xmlui.Submission.submit.SelectCollection.collection_help">Select the collection you wish to submit an item to.</message>
+	<message key="xmlui.Submission.submit.SelectCollection.collection_help">Select the collection you wish to submit an item to. When the Default Holding Collection is the only option available, please submit there. Afterwards, the RDS team will get in touch to help you decide the most suited collection for your dataset and take care of moving your deposit there.</message>
 	<message key="xmlui.Submission.submit.SelectCollection.collection_default">Select a collection...</message>
 
 	<!-- org.dspace.app.xmlui.Submission.submit.SaveOrRemoveStep -->
@@ -1471,7 +1471,7 @@
     <!-- org.dspace.app.xmlui.administrative.batchimport -->
     <message key="xmlui.administrative.batchimport.general.select_collection">Select a collection</message>
     <message key="xmlui.administrative.batchimport.general.collection">Collection</message>
-    <message key="xmlui.administrative.batchimport.general.collection_help">Select the collection you wish to submit an item to.</message>
+    <message key="xmlui.administrative.batchimport.general.collection_help">Select the collection you wish to submit an item to. When the Default Holding Collection is the only option available, please submit there. Afterwards, the RDS team will get in touch to help you decide the most suited collection for your dataset and take care of moving your deposit there.</message>
     <message key="xmlui.administrative.batchimport.general.collection_default">Select a collection...</message>
 
     <message key="xmlui.administrative.batchimport.general.title">Import Batch Load (ZIP)</message>
