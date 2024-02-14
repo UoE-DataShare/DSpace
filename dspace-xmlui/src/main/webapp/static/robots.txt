@@ -130,6 +130,9 @@ Disallow: /
 User-agent: fast
 Disallow: /
 
+User-agent: SemrushBot
+Disallow: /
+
 #
 # If your DSpace is going down because of someone using recursive wget, 
 # you can activate the following rule.
