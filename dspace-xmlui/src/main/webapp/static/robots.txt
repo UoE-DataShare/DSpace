@@ -126,11 +126,35 @@ Disallow: /
 User-agent: SemrushBot
 Disallow: /
 
-# Misbehaving: requests much too fast:
-User-agent: fast
+User-agent: GoogleOther
 Disallow: /
 
-User-agent: SemrushBot
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: omgili
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+# Misbehaving: requests much too fast:
+User-agent: fast
 Disallow: /
 
 #
