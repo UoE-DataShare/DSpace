@@ -153,6 +153,9 @@ Disallow: /
 User-agent: cohere-ai
 Disallow: /
 
+User-agent: AhrefsBot
+Disallow: /
+
 # Misbehaving: requests much too fast:
 User-agent: fast
 Disallow: /
