@@ -146,19 +146,19 @@
                                      <a href="/docs/Datashare-Accessibility.html">Accessibility</a>
                                    </li>
                                    <li>
-                                     <a href="http://www.ed.ac.uk/about/website/privacy">Cookies</a>
+                                     <a href="https://www.ed.ac.uk/about/website/privacy">Cookies</a>
                                    </li>
 
                                    <li>
-                                     <a href="https://www.ed.ac.uk/information-services/research-support/research-data-service/after/data-repository/service-policies/privacy-notice">DataShare Privacy Notice</a>
+                                     <a href="https://library.ed.ac.uk/research-support/research-data-service/after/data-repository/service-policies/privacy-notice">DataShare Privacy Notice</a>
                                    </li>
                                  </ul>
                                </div>
                                <div id="footer-2-col-2">
                                  <ul>
-                                   <li><a href="http://www.ed.ac.uk/information-services/research-support/data-library/contact-us">Contact Us</a></li>
-                                   <li><a href="http://www.ed.ac.uk/information-services/research-support/data-library/data-repository/service-policies/service-level-definition">Service level definition</a></li>
-                                   <li><a href="http://www.ed.ac.uk/about/website/freedom-information">Freedom of information</a></li>
+                                   <li><a href="https://library.ed.ac.uk/research-support/research-data-service/contact">Contact Us</a></li>
+                                   <li><a href="https://library.ed.ac.uk/research-support/research-data-service/after/data-repository/service-policies/service-level-definition">Service level definition</a></li>
+                                   <li><a href="https://www.ed.ac.uk/about/website/freedom-information">Freedom of information</a></li>
                                  </ul>
                                </div>
                                <div id="footer-2-col-3">The University of Edinburgh is a charitable body, registered in Scotland, with registration number SC005336, VAT Registration Number GB 592 9507 00, and is acknowledged by the UK authorities as a “Recognised body” which has been granted degree awarding powers.</div>
