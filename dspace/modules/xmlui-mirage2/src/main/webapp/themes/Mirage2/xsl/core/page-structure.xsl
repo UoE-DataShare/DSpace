@@ -143,14 +143,14 @@
                                    </li>
 
                                    <li>
-                                     <a href="https://www.ed.ac.uk/information-services/research-support/research-data-service/after/data-repository/service-policies/privacy-notice">DataShare Privacy Notice</a>
+                                     <a href="https://library.ed.ac.uk/research-support/research-data-service/after/data-repository/service-policies/privacy-notice">DataShare Privacy Notice</a>
                                    </li>
                                  </ul>
                                </div>
                                <div id="footer-2-col-2">
                                  <ul>
-                                   <li><a href="https://www.ed.ac.uk/information-services/research-support/data-library/contact-us">Contact Us</a></li>
-                                   <li><a href="https://www.ed.ac.uk/information-services/research-support/data-library/data-repository/service-policies/service-level-definition">Service level definition</a></li>
+                                   <li><a href="https://library.ed.ac.uk/research-support/research-data-service/contact">Contact Us</a></li>
+                                   <li><a href="https://library.ed.ac.uk/research-support/research-data-service/after/data-repository/service-policies/service-level-definition">Service level definition</a></li>
                                    <li><a href="https://www.ed.ac.uk/about/website/freedom-information">Freedom of information</a></li>
                                  </ul>
                                </div>
@@ -211,6 +211,14 @@
                     </xsl:if>
                 </xsl:attribute>
             </meta>
+
+            <xsl:if test="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='ROBOTS'][not(@qualifier)]">
+                <meta name="ROBOTS">
+                    <xsl:attribute name="content">
+                        <xsl:value-of select="/dri:document/dri:meta/dri:pageMeta/dri:metadata[@element='ROBOTS']"/>
+                    </xsl:attribute>
+                </meta>
+            </xsl:if>
 
             <!-- Add stylesheets -->
 

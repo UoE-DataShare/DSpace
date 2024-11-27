@@ -11,7 +11,9 @@ Sitemap: ${dspace.url}/htmlmap
 User-agent: *
 # Disable access to Discovery search and filters
 Disallow: /discover
+Disallow: /handle/10283/*/discover
 Disallow: /search-filter
+Disallow: /handle/10283/*/search-filter
 
 #
 # Optionally uncomment the following line ONLY if sitemaps are working
@@ -121,6 +123,39 @@ User-agent: CCBot
 Disallow: /
 
 User-agent: anthropic-ai
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: GoogleOther
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: omgili
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+User-agent: AhrefsBot
 Disallow: /
 
 # Misbehaving: requests much too fast:
