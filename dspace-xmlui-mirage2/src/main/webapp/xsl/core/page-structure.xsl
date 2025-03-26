@@ -553,7 +553,7 @@
               <a href="http://www.ed.ac.uk/information-services">INFORMATION SERVICES</a>
             </div>
             <div id="is-banner-contact-us" class="hidden-xs">
-              <a href="http://www.ed.ac.uk/information-services/research-support/data-library/contact-us">
+              <a href="https://library.ed.ac.uk/research-support/research-data-service/contact">
               <img alt="Contact Us" src="{$theme-path}/images/contact-us.png"/>
               </a>
             </div>
