@@ -379,6 +379,20 @@ public class ShibAuthentication implements AuthenticationMethod
                 groupIds.add(group.getID());
             }
 
+			// DATASHARE - start
+            // Adding special group DATASHARE_USERS 
+            log.info("Adding special group DATASHARE_USERS to the context");
+          
+            Group datashareUsersGroup = groupService.findByName(context, "DATASHARE_USERS");
+			
+            if (datashareUsersGroup != null) {
+                groupIds.add(datashareUsersGroup.getID());
+				
+            } else {
+                log.info("DATASHARE_USERS group not found");
+            }
+            // DATASHARE - end
+
 			// Cache the special groups, so we don't have to recalculate them again
 			// for this session.
 			request.getSession().setAttribute("shib.specialgroup", groupIds);
